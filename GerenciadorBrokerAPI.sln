@@ -5,6 +5,10 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerenciadorBrokerAPI", "GerenciadorBrokerAPI\GerenciadorBrokerAPI.csproj", "{B6F9071F-9EDA-4AF1-8F8A-5F077346D1A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infra", "Infra\Infra.csproj", "{143F7F2A-A792-4446-B8C6-1D69CD833F87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{B01EEA76-576B-4FF1-ADE6-504B1A86991C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{B6F9071F-9EDA-4AF1-8F8A-5F077346D1A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6F9071F-9EDA-4AF1-8F8A-5F077346D1A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6F9071F-9EDA-4AF1-8F8A-5F077346D1A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{143F7F2A-A792-4446-B8C6-1D69CD833F87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{143F7F2A-A792-4446-B8C6-1D69CD833F87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{143F7F2A-A792-4446-B8C6-1D69CD833F87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{143F7F2A-A792-4446-B8C6-1D69CD833F87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B01EEA76-576B-4FF1-ADE6-504B1A86991C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B01EEA76-576B-4FF1-ADE6-504B1A86991C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B01EEA76-576B-4FF1-ADE6-504B1A86991C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B01EEA76-576B-4FF1-ADE6-504B1A86991C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
