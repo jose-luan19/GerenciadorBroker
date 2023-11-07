@@ -1,4 +1,8 @@
+using CrossCouting;
 using Microsoft.AspNetCore.Mvc;
+using Models;
+using Models.ViewModel;
+using Services.Interfaces;
 
 namespace GerenciadorBrokerAPI.Controllers
 {
@@ -6,22 +10,30 @@ namespace GerenciadorBrokerAPI.Controllers
     [Route("[controller]")]
     public class QueueController : ControllerBase
     {
-
-
-        public QueueController()
+        private readonly IQueueService _queueService;
+        public QueueController(IQueueService queueService)
         {
+            _queueService = queueService;
         }
 
-        /*[HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpPost]
+        public async Task<IActionResult> CreateQueue([FromQuery] CreateQueueViewModel queue)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            await _queueService.CreateQueue(queue);
+            return Created("",queue);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteQueue([FromQuery] Guid id)
+        {
+            try
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
-        }*/
+                await _queueService.DeleteQueue(id);
+            }catch(NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            return NoContent();
+        }
     }
 }

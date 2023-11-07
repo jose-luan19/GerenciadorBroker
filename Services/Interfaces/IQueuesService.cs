@@ -1,0 +1,10 @@
+﻿using Models.ViewModel;
+
+namespace Services.Interfaces
+{
+    public interface IQueueService
+    {
+        Task CreateQueue(CreateQueueViewModel Queues);
+        Task DeleteQueue(Guid idQueue);
+    }
+}
