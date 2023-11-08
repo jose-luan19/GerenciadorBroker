@@ -18,11 +18,13 @@ builder.Services.AddScoped<IARepository<Client>, ClientRepository>();
 builder.Services.AddScoped<IARepository<Message>, MessageRepository>();
 builder.Services.AddScoped<IARepository<ClientQueue>, ClientQueueRepository>();
 builder.Services.AddScoped<IARepository<ClientTopic>, ClientTopicRepository>();
-builder.Services.AddScoped<IARepository<QueueTopic>, QueueTopicRepository>();
-builder.Services.AddScoped<IARepository<Topic>, TopicRepository>();
+
+builder.Services.AddScoped<IQueueTopicRepository, QueueTopicRepository>();
+builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 
 builder.Services.AddScoped<IQueueService, QueueService>();
+builder.Services.AddScoped<ITopicService, TopicService>();
 
 var app = builder.Build();
 

@@ -1,6 +1,5 @@
 using CrossCouting;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using Models.ViewModel;
 using Services.Interfaces;
 
@@ -23,10 +22,17 @@ namespace GerenciadorBrokerAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateQueue([FromQuery]CreateQueueViewModel queue)
+        public async Task<IActionResult> CreateQueue([FromQuery] CreateQueueViewModel queue)
         {
-            await _queueService.CreateQueue(queue);
-            return Created("",queue);
+            try
+            {
+                await _queueService.CreateQueue(queue);
+            }
+            catch (AlreadyExistExpection ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Created("", queue);
         }
 
         [HttpDelete("{id}")]
@@ -35,7 +41,8 @@ namespace GerenciadorBrokerAPI.Controllers
             try
             {
                 await _queueService.DeleteQueue(id);
-            }catch(NotFoundException ex)
+            }
+            catch (NotFoundException ex)
             {
                 return NotFound(ex.Message);
             }

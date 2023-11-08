@@ -17,13 +17,19 @@ namespace Services
 
         public async Task CreateQueue(CreateQueueViewModel queue)
         {
+
             ConfigRabbitMQ.Channel.QueueDeclare(queue: queue.Name, exclusive: false);
+            if (_repository.ExistByName(queue.Name))
+            {
+                throw new AlreadyExistExpection("Fila já existe");
+            }
             Queues newQueue = new Queues
             {
                 Name = queue.Name
             };
             _repository.Insert(newQueue);
             _repository.Commit();
+     
         }
 
         public async Task DeleteQueue(Guid idQueue)
