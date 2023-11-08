@@ -1,5 +1,6 @@
 using Infra;
 using Infra.Repository;
+using Infra.Repository.Interfaces;
 using Models;
 using Services;
 using Services.Interfaces;
@@ -19,7 +20,7 @@ builder.Services.AddScoped<IARepository<ClientQueue>, ClientQueueRepository>();
 builder.Services.AddScoped<IARepository<ClientTopic>, ClientTopicRepository>();
 builder.Services.AddScoped<IARepository<QueueTopic>, QueueTopicRepository>();
 builder.Services.AddScoped<IARepository<Topic>, TopicRepository>();
-builder.Services.AddScoped<IARepository<Queues>, QueueRepository>();
+builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 
 builder.Services.AddScoped<IQueueService, QueueService>();
 

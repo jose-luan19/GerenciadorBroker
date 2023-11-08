@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Migrations
 {
     [DbContext(typeof(DbContextClass))]
-    [Migration("20231107185611_initial")]
+    [Migration("20231108010710_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -35,9 +35,6 @@ namespace Infra.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime(6)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Client");
@@ -57,9 +54,6 @@ namespace Infra.Migrations
 
                     b.Property<Guid>("QueuesId")
                         .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -84,9 +78,6 @@ namespace Infra.Migrations
 
                     b.Property<Guid>("TopicId")
                         .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -113,9 +104,6 @@ namespace Infra.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime(6)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
@@ -135,9 +123,6 @@ namespace Infra.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -160,9 +145,6 @@ namespace Infra.Migrations
                     b.Property<string>("RoutingKey")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 

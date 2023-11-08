@@ -1,5 +1,5 @@
 ﻿using CrossCouting;
-using Infra.Repository;
+using Infra.Repository.Interfaces;
 using Models;
 using Models.ViewModel;
 using RabbitMQ.Client;
@@ -9,8 +9,8 @@ namespace Services
 {
     public class QueueService : IQueueService
     {
-        private readonly IARepository<Queues> _repository;
-        public QueueService(IARepository<Queues> repository)
+        private readonly IQueueRepository _repository;
+        public QueueService(IQueueRepository repository)
         {
             _repository = repository;
         }
@@ -30,13 +30,19 @@ namespace Services
         {
  
             Queues queue = _repository.GetById(idQueue);
+
             if(queue == null)
             {
-                throw new NotFoundException("A fila não foi encontrado.");
+                throw new NotFoundException("A fila não foi encontrada.");
             }
             ConfigRabbitMQ.Channel.QueueDelete(queue: queue.Name);
             _repository.Delete(queue);
             _repository.Commit();
+        }
+
+        public async Task<IEnumerable<Queues>> GetAllQueues()
+        {
+           return _repository.GetAll().AsEnumerable().OrderBy(x => x.CreateDate);
         }
     }
 }

@@ -21,8 +21,7 @@ namespace Infra.Migrations
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,8 +36,7 @@ namespace Infra.Migrations
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,8 +53,7 @@ namespace Infra.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     RoutingKey = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,8 +69,7 @@ namespace Infra.Migrations
                     Body = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ClientId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,8 +89,7 @@ namespace Infra.Migrations
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     QueuesId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     ClientId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -121,8 +116,7 @@ namespace Infra.Migrations
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     ClientId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     TopicId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {

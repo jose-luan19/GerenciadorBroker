@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace Infra.Repository
+namespace Infra.Repository.Interfaces
 {
     public interface IARepository<TEntity> where TEntity : class
     {

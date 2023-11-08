@@ -16,15 +16,21 @@ namespace GerenciadorBrokerAPI.Controllers
             _queueService = queueService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetQueue()
+        {
+            return Ok(await _queueService.GetAllQueues());
+        }
+
         [HttpPost]
-        public async Task<IActionResult> CreateQueue([FromQuery] CreateQueueViewModel queue)
+        public async Task<IActionResult> CreateQueue([FromQuery]CreateQueueViewModel queue)
         {
             await _queueService.CreateQueue(queue);
             return Created("",queue);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteQueue([FromQuery] Guid id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteQueue(Guid id)
         {
             try
             {
