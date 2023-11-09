@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Migrations
 {
     [DbContext(typeof(DbContextClass))]
-    [Migration("20231108010710_initial")]
+    [Migration("20231109143725_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -35,33 +35,15 @@ namespace Infra.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("QueueId")
+                        .HasColumnType("char(36)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("QueueId")
+                        .IsUnique();
 
                     b.ToTable("Client");
-                });
-
-            modelBuilder.Entity("Models.ClientQueue", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("QueuesId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("QueuesId");
-
-                    b.ToTable("ClientQueue");
                 });
 
             modelBuilder.Entity("Models.ClientTopic", b =>
@@ -98,7 +80,7 @@ namespace Infra.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid?>("ClientId")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreateDate")
@@ -109,6 +91,30 @@ namespace Infra.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("Message");
+                });
+
+            modelBuilder.Entity("Models.QueueTopic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("QueuesId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("TopicId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QueuesId");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("QueueTopic");
                 });
 
             modelBuilder.Entity("Models.Queues", b =>
@@ -151,23 +157,15 @@ namespace Infra.Migrations
                     b.ToTable("Topic");
                 });
 
-            modelBuilder.Entity("Models.ClientQueue", b =>
+            modelBuilder.Entity("Models.Client", b =>
                 {
-                    b.HasOne("Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
+                    b.HasOne("Models.Queues", "Queue")
+                        .WithOne("Client")
+                        .HasForeignKey("Models.Client", "QueueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Queues", "Queues")
-                        .WithMany()
-                        .HasForeignKey("QueuesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Queues");
+                    b.Navigation("Queue");
                 });
 
             modelBuilder.Entity("Models.ClientTopic", b =>
@@ -191,14 +189,42 @@ namespace Infra.Migrations
 
             modelBuilder.Entity("Models.Message", b =>
                 {
-                    b.HasOne("Models.Client", null)
+                    b.HasOne("Models.Client", "Client")
                         .WithMany("Messages")
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Models.QueueTopic", b =>
+                {
+                    b.HasOne("Models.Queues", "Queues")
+                        .WithMany()
+                        .HasForeignKey("QueuesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Topic", "Topic")
+                        .WithMany()
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Queues");
+
+                    b.Navigation("Topic");
                 });
 
             modelBuilder.Entity("Models.Client", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Models.Queues", b =>
+                {
+                    b.Navigation("Client");
                 });
 #pragma warning restore 612, 618
         }

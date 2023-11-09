@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IARepository<Client>, ClientRepository>();
 builder.Services.AddScoped<IARepository<Message>, MessageRepository>();
-builder.Services.AddScoped<IARepository<ClientQueue>, ClientQueueRepository>();
+//builder.Services.AddScoped<IARepository<ClientQueue>, ClientQueueRepository>();
 builder.Services.AddScoped<IARepository<ClientTopic>, ClientTopicRepository>();
 
 builder.Services.AddScoped<IQueueTopicRepository, QueueTopicRepository>();

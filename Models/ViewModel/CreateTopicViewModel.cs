@@ -8,7 +8,6 @@ namespace Models.ViewModel
         public string Name { get; set; }
         [NotNull]
         public string RoutingKey { get; set; }
-        [NotNull]
         public List<CreateQueueViewModel> QueuesName { get; set; }
     }
 }

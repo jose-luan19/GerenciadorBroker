@@ -8,7 +8,7 @@ namespace Infra.Repository.Interfaces
     {
         DbContext DbContext { get; }
         IQueryable<TEntity> GetAll();
-        void DeleteRange(params TEntity[] pObjects);
+        void DeleteRange(IEnumerable<TEntity> pObjects);
         TEntity GetById(object id);
         IEnumerable<TEntity> GetAllByFilter(Expression<Func<TEntity, bool>>? pFilter = null);
         TEntity Find(Expression<Func<TEntity, bool>>? keys = null);

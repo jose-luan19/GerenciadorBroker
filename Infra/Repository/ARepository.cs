@@ -22,7 +22,7 @@ namespace Infra.Repository
         public DbContext DbContext { get { return _context; } }
 
         public void Commit() => _context.SaveChanges();
-        public void DeleteRange(params TEntity[] pObjects)
+        public void DeleteRange(IEnumerable<TEntity> pObjects)
         {
             foreach (var pObject in pObjects)
             {

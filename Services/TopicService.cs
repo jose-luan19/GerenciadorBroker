@@ -26,29 +26,47 @@ namespace Services
 
         public async Task CreateTopic(CreateTopicViewModel topicViewModel)
         {
-            ConfigRabbitMQ.Channel.ExchangeDeclare(exchange: topicViewModel.Name, type: "topic");
-            if (_topicRepository.ExistByName(topicViewModel.Name))
+            Topic topic = _topicRepository.
+                Find(x => x.Name == topicViewModel.Name && x.RoutingKey == topicViewModel.RoutingKey);
+            if (topic == null)
             {
-                throw new AlreadyExistExpection("Topico já existe");
+                topic = new() 
+                { 
+                    Name = topicViewModel.Name,
+                    RoutingKey= topicViewModel.RoutingKey,
+                };
+                ConfigRabbitMQ.Channel.ExchangeDeclare(exchange: topicViewModel.Name, type: "topic");
+                _topicRepository.Insert(topic);
+                _topicRepository.Commit();
             }
-            Topic topic = new()
-            {
-                Name = topicViewModel.Name,
-                RoutingKey = topicViewModel.RoutingKey,
-            };
 
             await TopicBindQueues(topicViewModel.QueuesName, topic);
 
         }
 
-        public Task DeleteTopic(Guid idTopic)
+        public async Task DeleteTopic(string topicName)
         {
-            throw new NotImplementedException();
+            var topicDelete = _topicRepository.GetAllByFilter(x => x.Name == topicName).AsEnumerable();
+            if (topicDelete == null)
+            {
+                throw new NotFoundException("O Topico não foi encontrado.");
+            }
+            ConfigRabbitMQ.Channel.ExchangeDelete(topicName);
+
+            _topicRepository.DeleteRange(topicDelete);
+            _queueTopicRepository.DeleteByTopicid(topicDelete);
+
+            
+
+            _topicRepository.Commit();
+            _queueTopicRepository.Commit();
         }
 
-        public Task<IEnumerable<Topic>> GetAllQueues()
+        public async Task<IEnumerable<Topic>> GetAllTopics()
         {
-            throw new NotImplementedException();
+            var queueTopics = _queueTopicRepository.Include(i => i.Topic).ToList();
+            var queueTopics2 = _queueTopicRepository.Include(i => i.Queues).ToList();
+            return _topicRepository.GetAll().AsEnumerable().OrderBy(x => x.CreateDate);
         }
 
         public async Task TopicBindQueues(List<CreateQueueViewModel> queues, Topic topic)
@@ -62,16 +80,21 @@ namespace Services
                     var queue = _queueRepository.Find(x => x.Name == queuesName.Name);
                     if (queue != null)
                     {
-                        QueueTopic newQueueTopic = new() { QueuesId = queue.Id, TopicId = topic.Id };
-                        newQueuesTopic.Add(newQueueTopic);
+                        if (!_queueTopicRepository.Any(x => x.QueuesId == queue.Id && x.TopicId == topic.Id))
+                        {
+                            QueueTopic newQueueTopic = new() { QueuesId = queue.Id, TopicId = topic.Id };
+                            newQueuesTopic.Add(newQueueTopic);
+                        }
                     }
                     else
                     {
-                        Queues newQueue = new() { Name = queuesName.Name };
-                        QueueTopic newQueueTopic = new() { QueuesId = newQueue.Id, TopicId = topic.Id };
-                        newQueues.Add(newQueue);
+                        queue = new() { Name = queuesName.Name };
+                        QueueTopic newQueueTopic = new() { QueuesId = queue.Id, TopicId = topic.Id };
+                        newQueues.Add(queue);
                         newQueuesTopic.Add(newQueueTopic);
+                        ConfigRabbitMQ.Channel.QueueDeclare(queue: queue.Name, exclusive: false);
                     }
+                    ConfigRabbitMQ.Channel.QueueBind(queue: queue.Name, exchange: topic.Name, routingKey: topic.RoutingKey);
 
                 }
                 if (newQueues.Count > 0)
@@ -79,12 +102,12 @@ namespace Services
                     _queueRepository.InsertRange(newQueues);
                     _queueRepository.Commit();
                 }
-                _queueTopicRepository.InsertRange(newQueuesTopic);
-                _queueTopicRepository.Commit();
+                if (newQueuesTopic.Count > 0)
+                {
+                    _queueTopicRepository.InsertRange(newQueuesTopic);
+                    _queueTopicRepository.Commit();
+                }
             }
-            _topicRepository.Insert(topic);
-            _topicRepository.Commit();
-
         }
     }
 }

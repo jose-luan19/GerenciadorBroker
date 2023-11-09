@@ -15,21 +15,6 @@ namespace Infra.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Client",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Client", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Queues",
                 columns: table => new
                 {
@@ -62,48 +47,49 @@ namespace Infra.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Message",
+                name: "Client",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Body = table.Column<string>(type: "longtext", nullable: false)
+                    Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ClientId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    QueueId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Message", x => x.Id);
+                    table.PrimaryKey("PK_Client", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Message_Client_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Client",
-                        principalColumn: "Id");
+                        name: "FK_Client_Queues_QueueId",
+                        column: x => x.QueueId,
+                        principalTable: "Queues",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ClientQueue",
+                name: "QueueTopic",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     QueuesId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ClientId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    TopicId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientQueue", x => x.Id);
+                    table.PrimaryKey("PK_QueueTopic", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientQueue_Client_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Client",
+                        name: "FK_QueueTopic_Queues_QueuesId",
+                        column: x => x.QueuesId,
+                        principalTable: "Queues",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClientQueue_Queues_QueuesId",
-                        column: x => x.QueuesId,
-                        principalTable: "Queues",
+                        name: "FK_QueueTopic_Topic_TopicId",
+                        column: x => x.TopicId,
+                        principalTable: "Topic",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -136,15 +122,33 @@ namespace Infra.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ClientQueue_ClientId",
-                table: "ClientQueue",
-                column: "ClientId");
+            migrationBuilder.CreateTable(
+                name: "Message",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Body = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClientId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Message", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Message_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientQueue_QueuesId",
-                table: "ClientQueue",
-                column: "QueuesId");
+                name: "IX_Client_QueueId",
+                table: "Client",
+                column: "QueueId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientTopic_ClientId",
@@ -160,14 +164,21 @@ namespace Infra.Migrations
                 name: "IX_Message_ClientId",
                 table: "Message",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QueueTopic_QueuesId",
+                table: "QueueTopic",
+                column: "QueuesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QueueTopic_TopicId",
+                table: "QueueTopic",
+                column: "TopicId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ClientQueue");
-
             migrationBuilder.DropTable(
                 name: "ClientTopic");
 
@@ -175,13 +186,16 @@ namespace Infra.Migrations
                 name: "Message");
 
             migrationBuilder.DropTable(
-                name: "Queues");
+                name: "QueueTopic");
+
+            migrationBuilder.DropTable(
+                name: "Client");
 
             migrationBuilder.DropTable(
                 name: "Topic");
 
             migrationBuilder.DropTable(
-                name: "Client");
+                name: "Queues");
         }
     }
 }

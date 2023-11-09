@@ -7,6 +7,15 @@ namespace Infra.Repository
     {
         public QueueTopicRepository(DbContextClass context) : base(context){}
 
+        public void DeleteByTopicid(IEnumerable<Topic> topics)
+        {
+            foreach (var item in topics)
+            {
+                var queueTopicDelete = _dbSet.FirstOrDefault(x => x.TopicId == item.Id);
+                Delete(queueTopicDelete);
+            }
+        }
+
         public void Dispose() => GC.SuppressFinalize(this);
     }
 }

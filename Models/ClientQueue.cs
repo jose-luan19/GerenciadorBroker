@@ -1,4 +1,4 @@
-﻿namespace Models
+﻿/*namespace Models
 {
     public class ClientQueue : BaseEntity
     {
@@ -8,3 +8,4 @@
         public Guid ClientId { get; set; }
     }
 }
+*/

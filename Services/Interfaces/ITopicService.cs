@@ -6,7 +6,8 @@ namespace Services.Interfaces
     public interface ITopicService
     {
         Task CreateTopic(CreateTopicViewModel topicViewModel);
-        Task DeleteTopic(Guid idTopic);
-        Task<IEnumerable<Topic>> GetAllQueues();
+        Task DeleteTopic(string topicName);
+        Task<IEnumerable<Topic>> GetAllTopics();
+        Task TopicBindQueues(List<CreateQueueViewModel> queues, Topic topic);
     }
 }
