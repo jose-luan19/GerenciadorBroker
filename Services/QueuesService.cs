@@ -15,9 +15,9 @@ namespace Services
             _repository = repository;
         }
 
-        public async Task CreateQueue(CreateQueueViewModel queue)
+        public async Task<Queues> CreateQueue(CreateQueueViewModel queue)
         {
-            if (_repository.ExistByName(queue.Name))
+            if (_repository.Any(x => x.Name == queue.Name))
             {
                 throw new AlreadyExistExpection("Fila já existe");
             }
@@ -28,7 +28,7 @@ namespace Services
             };
             _repository.Insert(newQueue);
             _repository.Commit();
-     
+            return newQueue;
         }
 
         public async Task DeleteQueue(Guid idQueue)

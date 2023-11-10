@@ -5,7 +5,7 @@ namespace Services.Interfaces
 {
     public interface IQueueService
     {
-        Task CreateQueue(CreateQueueViewModel Queues);
+        Task<Queues> CreateQueue(CreateQueueViewModel Queues);
         Task DeleteQueue(Guid idQueue);
         Task<IEnumerable<Queues>> GetAllQueues();
     }

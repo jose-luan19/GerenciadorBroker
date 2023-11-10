@@ -9,10 +9,6 @@ namespace Infra.Repository
         {
         }
 
-        public bool ExistByName(string name)
-        {
-            return _dbSet.Any(x => x.Name == name);
-        }
         public void Dispose() => GC.SuppressFinalize(this);
     }
 }

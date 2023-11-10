@@ -1,4 +1,5 @@
 ﻿using Infra.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace Infra.Repository
@@ -7,7 +8,7 @@ namespace Infra.Repository
     {
         public QueueTopicRepository(DbContextClass context) : base(context){}
 
-        public void DeleteByTopicid(IEnumerable<Topic> topics)
+        public void DeleteByTopics(IEnumerable<Topic> topics)
         {
             foreach (var item in topics)
             {

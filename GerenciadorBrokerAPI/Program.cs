@@ -1,6 +1,7 @@
 using Infra;
 using Infra.Repository;
 using Infra.Repository.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Models;
 using Services;
 using Services.Interfaces;
@@ -14,9 +15,8 @@ builder.Services.AddDbContext<DbContextClass>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IARepository<Client>, ClientRepository>();
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IARepository<Message>, MessageRepository>();
-//builder.Services.AddScoped<IARepository<ClientQueue>, ClientQueueRepository>();
 builder.Services.AddScoped<IARepository<ClientTopic>, ClientTopicRepository>();
 
 builder.Services.AddScoped<IQueueTopicRepository, QueueTopicRepository>();
@@ -25,6 +25,9 @@ builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 
 builder.Services.AddScoped<IQueueService, QueueService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
+builder.Services.AddScoped<IClientService, ClientService>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 

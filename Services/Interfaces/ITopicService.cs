@@ -7,7 +7,7 @@ namespace Services.Interfaces
     {
         Task CreateTopic(CreateTopicViewModel topicViewModel);
         Task DeleteTopic(string topicName);
-        Task<IEnumerable<Topic>> GetAllTopics();
+        Task<List<ReadAllTopicsViewModel>> GetAllTopics();
         Task TopicBindQueues(List<CreateQueueViewModel> queues, Topic topic);
     }
 }

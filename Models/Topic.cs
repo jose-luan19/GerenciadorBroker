@@ -4,5 +4,6 @@
     {
         public string Name { get; set; }
         public string RoutingKey { get; set; }
+        public virtual ICollection<QueueTopic> QueueTopics { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CrossCouting;
+﻿using AutoMapper;
+using CrossCouting;
 using Infra.Repository.Interfaces;
 using Models;
 using Models.ViewModel;
@@ -12,16 +13,19 @@ namespace Services
         private readonly ITopicRepository _topicRepository;
         private readonly IQueueTopicRepository _queueTopicRepository;
         private readonly IQueueRepository _queueRepository;
+        private readonly IMapper _mapper;
         public TopicService
             (
             ITopicRepository topicRepository,
             IQueueTopicRepository queueTopicRepository,
-            IQueueRepository queueRepository
+            IQueueRepository queueRepository,
+            IMapper mapper
             )
         {
             _topicRepository = topicRepository;
             _queueTopicRepository = queueTopicRepository;
             _queueRepository = queueRepository;
+            _mapper = mapper;
         }
 
         public async Task CreateTopic(CreateTopicViewModel topicViewModel)
@@ -54,19 +58,17 @@ namespace Services
             ConfigRabbitMQ.Channel.ExchangeDelete(topicName);
 
             _topicRepository.DeleteRange(topicDelete);
-            _queueTopicRepository.DeleteByTopicid(topicDelete);
-
-            
+            _queueTopicRepository.DeleteByTopics(topicDelete);
 
             _topicRepository.Commit();
             _queueTopicRepository.Commit();
         }
 
-        public async Task<IEnumerable<Topic>> GetAllTopics()
+        public async Task<List<ReadAllTopicsViewModel>> GetAllTopics()
         {
-            var queueTopics = _queueTopicRepository.Include(i => i.Topic).ToList();
-            var queueTopics2 = _queueTopicRepository.Include(i => i.Queues).ToList();
-            return _topicRepository.GetAll().AsEnumerable().OrderBy(x => x.CreateDate);
+            var queueTopics = await _topicRepository.GetAllInclude();
+            var map = _mapper.Map<List<ReadAllTopicsViewModel>>(queueTopics);
+            return map;
         }
 
         public async Task TopicBindQueues(List<CreateQueueViewModel> queues, Topic topic)
