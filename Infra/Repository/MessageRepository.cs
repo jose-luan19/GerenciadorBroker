@@ -3,7 +3,7 @@ using Models;
 
 namespace Infra.Repository
 {
-    public class MessageRepository : ARepository<Message>, IMessageRepository
+    public class MessageRepository : ARepository<MessageRecevied>, IMessageRepository
     {
         public MessageRepository(DbContextClass context) : base(context)
         {

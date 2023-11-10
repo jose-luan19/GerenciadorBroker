@@ -9,25 +9,8 @@ namespace CrossCouting
 {
     public class MessageConsumerService : BackgroundService
     {
-        private readonly IServiceProvider _serviceProvider;
         private IClientService _clientService;
-
-
-        private readonly object _lock = new object();
-        private string _queueName;
-
-        public void SetQueueName(string queueName)
-        {
-            if (queueName == null)
-            {
-                throw new ArgumentNullException(nameof(queueName), "queueName não pode ser nulo");
-            }
-
-            lock (_lock)
-            {
-                _queueName = queueName;
-            }
-        }
+        private readonly IServiceProvider _serviceProvider;
 
         public MessageConsumerService(IServiceProvider serviceProvider)
         {
@@ -35,33 +18,26 @@ namespace CrossCouting
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            using (var scope = _serviceProvider.CreateScope())
             {
-                string currentQueueName;
-
-                lock (_lock)
+                _clientService = scope.ServiceProvider.GetRequiredService<IClientService>();
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    currentQueueName = _queueName;
-                }
-
-                if (currentQueueName != null)
-                {
-                    var consumer = new EventingBasicConsumer(ConfigRabbitMQ.Channel);
-                    consumer.Received += (model, ea) =>
+                    var clients = await _clientService.GetAllClient();
+                    foreach (var client in clients)
                     {
-                        var body = ea.Body.ToArray();
-                        var message = Encoding.UTF8.GetString(body);
-                        Console.WriteLine($" [x] Recebida mensagem: '{message}' com routing key: '{ea.RoutingKey}'");
-                        using (var scope = _serviceProvider.CreateScope())
+                        var consumer = new EventingBasicConsumer(ConfigRabbitMQ.Channel);
+                        consumer.Received += (model, ea) =>
                         {
-                            _clientService = scope.ServiceProvider.GetRequiredService<IClientService>();
-                        }
-                    };
-
-                    ConfigRabbitMQ.Channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
+                            var body = ea.Body.ToArray();
+                            var message = Encoding.UTF8.GetString(body);
+                            Console.WriteLine($" [x] Recebida mensagem: '{message}' com routing key: '{ea.RoutingKey}'");
+                            
+                        };
+                        ConfigRabbitMQ.Channel.BasicConsume(queue: client.Queue.Name, autoAck: true, consumer: consumer);
+                    }
+                    await Task.Delay(2000, stoppingToken);
                 }
-
-                await Task.Delay(1000, stoppingToken);
             }
         }
     }

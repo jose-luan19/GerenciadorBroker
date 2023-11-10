@@ -39,7 +39,7 @@ namespace Services
                     Name = topicViewModel.Name,
                     RoutingKey = topicViewModel.RoutingKey,
                 };
-                ConfigRabbitMQ.Channel.ExchangeDeclare(exchange: topicViewModel.Name, type: "topic");
+                ConfigRabbitMQ.Channel.ExchangeDeclare(exchange: topicViewModel.Name, type: "topic", durable: true, autoDelete: false);
                 _topicRepository.Insert(topic);
                 _topicRepository.Commit();
             }

@@ -3,8 +3,9 @@ using CrossCouting;
 using Infra.Repository.Interfaces;
 using Models;
 using Models.ViewModel;
-using RabbitMQ.Client;
 using Services.Interfaces;
+using System.Text.Json;
+using System;
 
 namespace Services
 {
@@ -13,27 +14,27 @@ namespace Services
         private readonly IClientRepository _clientRepository;
         private readonly ITopicRepository _topicRepository;
         private readonly IClientTopicRepository _clientTopicRepository;
+        private readonly IMessageRepository _messageRepository;
         private readonly IQueueService _queueService;
         private readonly ITopicService _topicService;
-        private readonly MessageConsumerService _consumer;
         private readonly IMapper _mapper;
         public ClientService
             (
             IClientRepository clientRepository,
             ITopicRepository topicRepository,
             IClientTopicRepository clientTopicRepository,
+            IMessageRepository messageRepository,
             IQueueService queueService,
-            ITopicService topicService, 
-            MessageConsumerService consumer,
+            ITopicService topicService,
             IMapper mapper
             )
         {
             _clientRepository = clientRepository;
             _topicRepository = topicRepository;
             _clientTopicRepository = clientTopicRepository;
+            _messageRepository = messageRepository;
             _queueService = queueService;
             _topicService = topicService;
-            _consumer = consumer;
             _mapper = mapper;
         }
 
@@ -53,8 +54,6 @@ namespace Services
             };
             _clientRepository.Insert(newClient);
             _clientRepository.Commit();
-            _consumer.SetQueueName(queue.Name);
-
         }
 
         public async Task DeleteClient(Guid id)
@@ -70,10 +69,7 @@ namespace Services
 
         public async Task<List<ReadClientViewModel>> GetAllClient()
         {
-            var clients = await _clientRepository.GetAllInclude();
-            var clientViewModel = _mapper.Map<List<ReadClientViewModel>>(clients);
-
-            return clientViewModel;
+            return _mapper.Map<List<ReadClientViewModel>>(await _clientRepository.GetAllInclude());
         }
 
         public async Task<ReadClientViewModel> GetClient(Guid id)
@@ -98,15 +94,26 @@ namespace Services
                 }
             };
             await _topicService.TopicBindQueues(createQueueViewModels, topic);
-            ClientTopic newClientTopic = new() 
-            { 
-                ClientId = subscribeTopicViewModel.ClientId, 
-                TopicId = subscribeTopicViewModel.TopicId 
+            ClientTopic newClientTopic = new()
+            {
+                ClientId = subscribeTopicViewModel.ClientId,
+                TopicId = subscribeTopicViewModel.TopicId
             };
             _clientTopicRepository.Insert(newClientTopic);
             _clientTopicRepository.Commit();
+        }
 
-            
+        public async Task GetMessages(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public async Task PostMessage(CreateMessageViewModel createMessageViewModel)
+        {
+
+
+            string json = JsonSerializer.Serialize(createMessageViewModel);
         }
     }
 }

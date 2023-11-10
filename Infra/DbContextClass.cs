@@ -25,7 +25,7 @@ namespace Infra
         public DbSet<ClientTopic> ClientTopic { get; set; }
         //public DbSet<ClientQueue> ClientQueue { get; set; }
         public DbSet<QueueTopic> QueueTopic { get; set; }
-        public DbSet<Message> Message { get; set; }
+        public DbSet<MessageRecevied> Message { get; set; }
 
 
     }
