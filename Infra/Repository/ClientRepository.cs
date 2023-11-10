@@ -9,7 +9,10 @@ namespace Infra.Repository
         public ClientRepository(DbContextClass context) : base(context)
         {
         }
-
+        public override Client GetById(object id)
+        {
+            return _dbSet.Include(x => x.Queue).First(x => x.Id == (Guid)id);
+        }
         public async Task<List<Client>> GetAllInclude()
         {
             return _dbSet.Include(x => x.Queue).OrderBy(x => x.CreateDate).ToList();

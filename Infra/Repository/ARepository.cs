@@ -29,7 +29,7 @@ namespace Infra.Repository
                 Delete(pObject);
             }
         }
-        public TEntity GetById(object id)
+        public virtual TEntity GetById(object id)
         {
             return _dbSet.Find(id);
         }

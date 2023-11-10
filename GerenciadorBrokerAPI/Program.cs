@@ -1,3 +1,4 @@
+using CrossCouting;
 using Infra;
 using Infra.Repository;
 using Infra.Repository.Interfaces;
@@ -15,10 +16,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
-builder.Services.AddScoped<IARepository<Message>, MessageRepository>();
-builder.Services.AddScoped<IARepository<ClientTopic>, ClientTopicRepository>();
-
+builder.Services.AddScoped<IClientTopicRepository, ClientTopicRepository>();
 builder.Services.AddScoped<IQueueTopicRepository, QueueTopicRepository>();
+
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 
@@ -28,9 +29,11 @@ builder.Services.AddScoped<IClientService, ClientService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddSingleton<MessageConsumerService>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<MessageConsumerService>());
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

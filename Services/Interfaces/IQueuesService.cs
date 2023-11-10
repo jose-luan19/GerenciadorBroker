@@ -7,6 +7,6 @@ namespace Services.Interfaces
     {
         Task<Queues> CreateQueue(CreateQueueViewModel Queues);
         Task DeleteQueue(Guid idQueue);
-        Task<IEnumerable<Queues>> GetAllQueues();
+        Task<List<ReadAllQueueViewModel>> GetAllQueues();
     }
 }

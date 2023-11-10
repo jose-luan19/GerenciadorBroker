@@ -94,10 +94,9 @@ namespace Services
                         QueueTopic newQueueTopic = new() { QueuesId = queue.Id, TopicId = topic.Id };
                         newQueues.Add(queue);
                         newQueuesTopic.Add(newQueueTopic);
-                        ConfigRabbitMQ.Channel.QueueDeclare(queue: queue.Name, exclusive: false);
+                        ConfigRabbitMQ.Channel.QueueDeclare(queue: queue.Name, exclusive: false, durable: true, autoDelete: false);
                     }
                     ConfigRabbitMQ.Channel.QueueBind(queue: queue.Name, exchange: topic.Name, routingKey: topic.RoutingKey);
-
                 }
                 if (newQueues.Count > 0)
                 {

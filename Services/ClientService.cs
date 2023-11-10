@@ -3,6 +3,7 @@ using CrossCouting;
 using Infra.Repository.Interfaces;
 using Models;
 using Models.ViewModel;
+using RabbitMQ.Client;
 using Services.Interfaces;
 
 namespace Services
@@ -10,17 +11,29 @@ namespace Services
     public class ClientService : IClientService
     {
         private readonly IClientRepository _clientRepository;
+        private readonly ITopicRepository _topicRepository;
+        private readonly IClientTopicRepository _clientTopicRepository;
         private readonly IQueueService _queueService;
+        private readonly ITopicService _topicService;
+        private readonly MessageConsumerService _consumer;
         private readonly IMapper _mapper;
         public ClientService
             (
             IClientRepository clientRepository,
+            ITopicRepository topicRepository,
+            IClientTopicRepository clientTopicRepository,
             IQueueService queueService,
+            ITopicService topicService, 
+            MessageConsumerService consumer,
             IMapper mapper
             )
         {
             _clientRepository = clientRepository;
+            _topicRepository = topicRepository;
+            _clientTopicRepository = clientTopicRepository;
             _queueService = queueService;
+            _topicService = topicService;
+            _consumer = consumer;
             _mapper = mapper;
         }
 
@@ -40,6 +53,8 @@ namespace Services
             };
             _clientRepository.Insert(newClient);
             _clientRepository.Commit();
+            _consumer.SetQueueName(queue.Name);
+
         }
 
         public async Task DeleteClient(Guid id)
@@ -64,6 +79,34 @@ namespace Services
         public async Task<ReadClientViewModel> GetClient(Guid id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task SubscribeTopic(SubscribeTopicViewModel subscribeTopicViewModel)
+        {
+            var client = _clientRepository.GetById(subscribeTopicViewModel.ClientId);
+            var topic = _topicRepository.GetById(subscribeTopicViewModel.TopicId);
+
+            if (client == null || topic == null)
+            {
+                throw new NotFoundException("Cliente ou Topico não existe");
+            }
+            List<CreateQueueViewModel> createQueueViewModels = new List<CreateQueueViewModel>()
+            {
+                new()
+                {
+                    Name = client.Queue.Name
+                }
+            };
+            await _topicService.TopicBindQueues(createQueueViewModels, topic);
+            ClientTopic newClientTopic = new() 
+            { 
+                ClientId = subscribeTopicViewModel.ClientId, 
+                TopicId = subscribeTopicViewModel.TopicId 
+            };
+            _clientTopicRepository.Insert(newClientTopic);
+            _clientTopicRepository.Commit();
+
+            
         }
     }
 }

@@ -54,5 +54,19 @@ namespace GerenciadorBrokerAPI.Controllers
             }
             return NoContent();
         }
+
+        [HttpPost("Subscribe")]
+        public async Task<IActionResult> SubscribeClientInTopic(SubscribeTopicViewModel subscribeTopicViewModel)
+        {
+            try
+            {
+                await _clientService.SubscribeTopic(subscribeTopicViewModel);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            return Ok();
+        }
     }
 }
