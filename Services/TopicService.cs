@@ -34,10 +34,10 @@ namespace Services
                 Find(x => x.Name == topicViewModel.Name && x.RoutingKey == topicViewModel.RoutingKey);
             if (topic == null)
             {
-                topic = new() 
-                { 
+                topic = new()
+                {
                     Name = topicViewModel.Name,
-                    RoutingKey= topicViewModel.RoutingKey,
+                    RoutingKey = topicViewModel.RoutingKey,
                 };
                 ConfigRabbitMQ.Channel.ExchangeDeclare(exchange: topicViewModel.Name, type: "topic");
                 _topicRepository.Insert(topic);

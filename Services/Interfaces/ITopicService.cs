@@ -1,5 +1,5 @@
-﻿using Models.ViewModel;
-using Models;
+﻿using Models;
+using Models.ViewModel;
 
 namespace Services.Interfaces
 {

@@ -1,7 +1,6 @@
 using Infra;
 using Infra.Repository;
 using Infra.Repository.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 using Models;
 using Services;
 using Services.Interfaces;

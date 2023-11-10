@@ -1,12 +1,11 @@
 ﻿using Infra.Repository.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace Infra.Repository
 {
     public class QueueTopicRepository : ARepository<QueueTopic>, IQueueTopicRepository
     {
-        public QueueTopicRepository(DbContextClass context) : base(context){}
+        public QueueTopicRepository(DbContextClass context) : base(context) { }
 
         public void DeleteByTopics(IEnumerable<Topic> topics)
         {

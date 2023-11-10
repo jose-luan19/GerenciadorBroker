@@ -33,10 +33,10 @@ namespace Services
 
         public async Task DeleteQueue(Guid idQueue)
         {
- 
+
             Queues queue = _repository.GetById(idQueue);
 
-            if(queue == null)
+            if (queue == null)
             {
                 throw new NotFoundException("A fila não foi encontrada.");
             }
@@ -47,7 +47,7 @@ namespace Services
 
         public async Task<IEnumerable<Queues>> GetAllQueues()
         {
-           return _repository.GetAll().AsEnumerable().OrderBy(x => x.CreateDate);
+            return _repository.GetAll().AsEnumerable().OrderBy(x => x.CreateDate);
         }
     }
 }
