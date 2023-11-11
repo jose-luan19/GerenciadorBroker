@@ -9,7 +9,5 @@ namespace Services.Interfaces
         Task<ReadClientViewModel> GetClient(Guid id);
         Task<List<ReadClientViewModel>> GetAllClient();
         Task SubscribeTopic(SubscribeTopicViewModel subscribeTopicViewModel);
-        Task GetMessages(string message);
-        Task PostMessage(CreateMessageViewModel createMessageViewModel);
     }
 }

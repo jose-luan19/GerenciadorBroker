@@ -19,5 +19,11 @@ namespace Infra.Repository
         }
         public void Dispose() => GC.SuppressFinalize(this);
 
+        public async Task<List<Guid>> GetIdClientsByTopicId(string topicName, string RoutingKey)
+         => _dbSet
+            .Where(c => c.ClientTopic.Any(ct => ct.Topic.Name == topicName && ct.Topic.RoutingKey == RoutingKey))
+            .Select(c => c.Id)
+            .ToList();
+        
     }
 }

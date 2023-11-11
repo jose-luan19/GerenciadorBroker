@@ -4,8 +4,6 @@ using Infra.Repository.Interfaces;
 using Models;
 using Models.ViewModel;
 using Services.Interfaces;
-using System.Text.Json;
-using System;
 
 namespace Services
 {
@@ -14,7 +12,6 @@ namespace Services
         private readonly IClientRepository _clientRepository;
         private readonly ITopicRepository _topicRepository;
         private readonly IClientTopicRepository _clientTopicRepository;
-        private readonly IMessageRepository _messageRepository;
         private readonly IQueueService _queueService;
         private readonly ITopicService _topicService;
         private readonly IMapper _mapper;
@@ -23,7 +20,6 @@ namespace Services
             IClientRepository clientRepository,
             ITopicRepository topicRepository,
             IClientTopicRepository clientTopicRepository,
-            IMessageRepository messageRepository,
             IQueueService queueService,
             ITopicService topicService,
             IMapper mapper
@@ -32,7 +28,6 @@ namespace Services
             _clientRepository = clientRepository;
             _topicRepository = topicRepository;
             _clientTopicRepository = clientTopicRepository;
-            _messageRepository = messageRepository;
             _queueService = queueService;
             _topicService = topicService;
             _mapper = mapper;
@@ -101,19 +96,6 @@ namespace Services
             };
             _clientTopicRepository.Insert(newClientTopic);
             _clientTopicRepository.Commit();
-        }
-
-        public async Task GetMessages(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public async Task PostMessage(CreateMessageViewModel createMessageViewModel)
-        {
-
-
-            string json = JsonSerializer.Serialize(createMessageViewModel);
         }
     }
 }

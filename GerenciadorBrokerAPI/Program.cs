@@ -19,13 +19,14 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IClientTopicRepository, ClientTopicRepository>();
 builder.Services.AddScoped<IQueueTopicRepository, QueueTopicRepository>();
 
-builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IMessageReceviedRepository, MessageReceviedRepository>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 
 builder.Services.AddScoped<IQueueService, QueueService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

@@ -4,20 +4,20 @@ using Services.Interfaces;
 
 namespace GerenciadorBrokerAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class MessageController : ControllerBase
     {
-        private readonly IClientService _clientService;
-        public MessageController(IClientService clientService)
+        private readonly IMessageService _messageService;
+        public MessageController(IMessageService clientService)
         {
-            _clientService = clientService;
+            _messageService = clientService;
         }
 
         [HttpPost]
         public async Task<IActionResult> SendMessage(CreateMessageViewModel createMessageViewModel)
         {
-            await _clientService.PostMessage(createMessageViewModel);
+            await _messageService.PostMessage(createMessageViewModel);
             return Ok();
         }
     }
