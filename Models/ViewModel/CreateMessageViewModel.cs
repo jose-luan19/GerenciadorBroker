@@ -8,5 +8,6 @@ namespace Models.ViewModel
         [NotNull]
         public string Message { get; set; }
         public Guid? TopicId { get; set; }
+        public DateTime? SendMessageDate { get; set; }
     }
 }

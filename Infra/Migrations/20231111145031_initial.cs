@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -122,20 +123,21 @@ namespace Infra.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Message",
+                name: "MessageRecevied",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Body = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ClientId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    SendMessageDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Message", x => x.Id);
+                    table.PrimaryKey("PK_MessageRecevied", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Message_Client_ClientId",
+                        name: "FK_MessageRecevied_Client_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Client",
                         principalColumn: "Id",
@@ -160,8 +162,8 @@ namespace Infra.Migrations
                 column: "TopicId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_ClientId",
-                table: "Message",
+                name: "IX_MessageRecevied_ClientId",
+                table: "MessageRecevied",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
@@ -182,7 +184,7 @@ namespace Infra.Migrations
                 name: "ClientTopic");
 
             migrationBuilder.DropTable(
-                name: "Message");
+                name: "MessageRecevied");
 
             migrationBuilder.DropTable(
                 name: "QueueTopic");

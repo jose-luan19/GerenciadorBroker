@@ -33,20 +33,21 @@ namespace Services
         {
             var messageRecevied = JsonSerializer.Deserialize<CreateMessageViewModel>(json);
 
-            if (messageRecevied.ClientId != null)
+            if (!_messageRepository.Any(x => x.SendMessageDate == messageRecevied.SendMessageDate))
             {
-                MessageRecevied newMessageRecevied = new()
+                if (messageRecevied.ClientId != null)
                 {
-                    Body = messageRecevied.Message,
-                    ClientId = (Guid)messageRecevied.ClientId
-                };
-                _messageRepository.Insert(newMessageRecevied);
-            }
-            else
-            {
-                var lisIds = await _clientTopicRepository.GetIdClientsByTopicId((Guid)messageRecevied.TopicId);
-                if (!_messageRepository.Any(x => x.Body == messageRecevied.Message && x.ClientId == lisIds.First()))
+                    MessageRecevied newMessageRecevied = new()
+                    {
+                        Body = messageRecevied.Message,
+                        ClientId = (Guid)messageRecevied.ClientId,
+                        SendMessageDate = (DateTime)messageRecevied.SendMessageDate,
+                    };
+                    _messageRepository.Insert(newMessageRecevied);
+                }
+                else
                 {
+                    var lisIds = await _clientTopicRepository.GetIdClientsByTopicId((Guid)messageRecevied.TopicId);
                     foreach (var clientId in lisIds)
                     {
                         _messageRepository.Insert(
@@ -54,16 +55,18 @@ namespace Services
                             {
                                 Body = messageRecevied.Message,
                                 ClientId = clientId,
+                                SendMessageDate = (DateTime)messageRecevied.SendMessageDate
                             }
                         );
                     }
                 }
+                _messageRepository.Commit();
             }
-            _messageRepository.Commit();
         }
 
         public async Task PostMessage(CreateMessageViewModel createMessageViewModel)
         {
+            createMessageViewModel.SendMessageDate = DateTime.Now;
             var json = JsonSerializer.Serialize(createMessageViewModel);
             var body = Encoding.UTF8.GetBytes(json);
             if (createMessageViewModel.ClientId != null)

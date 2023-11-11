@@ -67,7 +67,7 @@ namespace Infra.Migrations
                     b.ToTable("ClientTopic");
                 });
 
-            modelBuilder.Entity("Models.Message", b =>
+            modelBuilder.Entity("Models.MessageRecevied", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,11 +83,14 @@ namespace Infra.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<DateTime>("SendMessageDate")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Message");
+                    b.ToTable("MessageRecevied");
                 });
 
             modelBuilder.Entity("Models.QueueTopic", b =>
@@ -168,13 +171,13 @@ namespace Infra.Migrations
             modelBuilder.Entity("Models.ClientTopic", b =>
                 {
                     b.HasOne("Models.Client", "Client")
-                        .WithMany()
+                        .WithMany("ClientTopic")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Models.Topic", "Topic")
-                        .WithMany()
+                        .WithMany("ClientTopic")
                         .HasForeignKey("TopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -184,7 +187,7 @@ namespace Infra.Migrations
                     b.Navigation("Topic");
                 });
 
-            modelBuilder.Entity("Models.Message", b =>
+            modelBuilder.Entity("Models.MessageRecevied", b =>
                 {
                     b.HasOne("Models.Client", "Client")
                         .WithMany("Messages")
@@ -198,13 +201,13 @@ namespace Infra.Migrations
             modelBuilder.Entity("Models.QueueTopic", b =>
                 {
                     b.HasOne("Models.Queues", "Queues")
-                        .WithMany()
+                        .WithMany("QueueTopics")
                         .HasForeignKey("QueuesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Models.Topic", "Topic")
-                        .WithMany()
+                        .WithMany("QueueTopics")
                         .HasForeignKey("TopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -216,12 +219,23 @@ namespace Infra.Migrations
 
             modelBuilder.Entity("Models.Client", b =>
                 {
+                    b.Navigation("ClientTopic");
+
                     b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Models.Queues", b =>
                 {
                     b.Navigation("Client");
+
+                    b.Navigation("QueueTopics");
+                });
+
+            modelBuilder.Entity("Models.Topic", b =>
+                {
+                    b.Navigation("ClientTopic");
+
+                    b.Navigation("QueueTopics");
                 });
 #pragma warning restore 612, 618
         }
