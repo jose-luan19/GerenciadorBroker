@@ -35,7 +35,7 @@ builder.Services.AddHostedService(provider => provider.GetRequiredService<Messag
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
