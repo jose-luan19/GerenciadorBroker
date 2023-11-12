@@ -22,7 +22,7 @@ namespace GerenciadorBrokerAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTopic(CreateTopicViewModel topicViewModel)
+        public async Task<IActionResult> CreateTopic([FromQuery]CreateTopicViewModel topicViewModel)
         {
             try
             {
@@ -32,11 +32,11 @@ namespace GerenciadorBrokerAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            return Created("", topicViewModel.Name);
+            return Created("", topicViewModel);
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteTopic(string topicName)
+        public async Task<IActionResult> DeleteTopic([FromQuery]string topicName)
         {
             try
             {

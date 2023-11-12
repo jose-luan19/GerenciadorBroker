@@ -4,6 +4,7 @@ import { Queue } from '../interfaces/queue';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalComponent } from '../component/modal/modal.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Response } from '../interfaces/response';
 
 
 @Component({
@@ -49,7 +50,7 @@ export class ListQueuesComponent implements OnInit {
       }
     );
   }
-  openDialog(title: string, parameterString: string, ): void {
+  openDialog(title: string, parameterString: string ): void {
     const dialogRef = this.dialog.open(ModalComponent, {
       width: '300px',
       data: {
@@ -61,9 +62,9 @@ export class ListQueuesComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log('O modal foi fechado. Dados: ', result);
       this.queueService.createQueue(result.name).subscribe(
-        (response) => {
+        (response: Response) => {
           console.log('Fila criada', response);
-          this.openSnackBar('Fila criada', 'Fechar', true);
+          this.openSnackBar(`Fila \'${response.name}\' criada`, 'Fechar', true);
           this.getData();
           this.cdr.detectChanges();
         },

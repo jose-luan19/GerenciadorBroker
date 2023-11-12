@@ -1,0 +1,46 @@
+<header class="text-center mt-5">
+  <div class="row justify-content-center align-items-center">
+    <div class="col-auto">
+      <h1 class="display-5">Tópicos</h1>
+    </div>
+    <div class="col-auto" id="buttonCreate">
+      <button mat-raised-button  class="btn btn-success" (click)="openDialog('CRIAR TÓPICO', 'Nome do tópico', 'Rota do tópico')">
+        <i class="bi bi-plus"></i> Criar Tópico
+      </button>
+    </div>
+  </div>
+</header>
+
+<table class="table container-xl" style="margin-bottom: 75px;">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th scope="col">Nome</th>
+      <th scope="col">Rota</th>
+      <th scope="col">Clientes</th>
+      <th class="image">Ação</th>
+    </tr>
+  </thead>
+  <tbody class="table-group-divider">
+    <tr *ngFor="let item of list; let i=index;">
+      <td>{{ i+1 }}</td>
+      <td>{{ item.name }}</td>
+      <td>{{ item.routingKey }}</td>
+      <td>
+        <ul class="topics-list">
+          <ng-container *ngIf="item.clientNames && item.clientNames.length > 0; else noClient">
+            <li *ngFor="let client of item.clientNames" class="topics-list-item">{{ client }}</li>
+          </ng-container>
+        </ul>
+        <ng-template #noClient>
+          <p>#</p>
+        </ng-template>
+      </td>
+      <td><button type="button" class="btn btn-danger" (click)="clickDeleteTopic(item.name)">
+        <i class="bi bi-trash"></i> Excluir
+      </button></td>
+    </tr>
+
+
+  </tbody>
+</table>

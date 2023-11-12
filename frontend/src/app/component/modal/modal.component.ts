@@ -16,6 +16,6 @@ export class ModalComponent {
     this.dialogRef.close();
   }
   shouldRoutingKey(): boolean {
-    return this.data.routingKey !== undefined;
+    return this.data.routingKeyPlaceholder !== undefined;
   }
 }

@@ -22,7 +22,7 @@ namespace Models.Mapper
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Queues.Name));
 
             CreateMap<Topic, ReadAllTopicsViewModel>()
-                .ForMember(dest => dest.Queues, opt => opt.MapFrom(src => src.QueueTopics.Select(qt => qt.Queues)));
+                .ForMember(dest => dest.ClientNames, opt => opt.MapFrom(src => src.ClientTopic.Select(qt => qt.Client.Name).ToList()));
         }
     }
 }

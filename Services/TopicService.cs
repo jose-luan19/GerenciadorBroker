@@ -55,10 +55,7 @@ namespace Services
             ConfigRabbitMQ.Channel.ExchangeDelete(topicName);
 
             _topicRepository.DeleteRange(topicDelete);
-            _queueTopicRepository.DeleteByTopics(topicDelete);
-
             _topicRepository.Commit();
-            _queueTopicRepository.Commit();
         }
 
         public async Task<List<ReadAllTopicsViewModel>> GetAllTopics()

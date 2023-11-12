@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { Queue } from '../interfaces/queue';
+import { Response } from '../interfaces/response';
 
 
 @Injectable({
@@ -10,7 +10,7 @@ import { Queue } from '../interfaces/queue';
 })
 export class QueueService {
 
-  constructor(private httpClient: HttpClient, private router: Router) { }
+  constructor(private httpClient: HttpClient) { }
   private url = environment.apiUrl + "Queue/";
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export class QueueService {
 
   createQueue(name: string){
     const urlPost = this.url+`?Name=${name}`
-    return this.httpClient.post(urlPost,{})
+    return this.httpClient.post<Response>(urlPost,{})
   }
 
 }

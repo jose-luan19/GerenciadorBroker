@@ -13,8 +13,8 @@ namespace Infra.Repository
         public async Task<List<Topic>> GetAllInclude()
         {
             return _dbSet
-                .Include(topic => topic.QueueTopics)
-                    .ThenInclude(queueTopic => queueTopic.Queues)
+                .Include(topic => topic.ClientTopic)
+                    .ThenInclude(queueTopic => queueTopic.Client)
                 .OrderBy(x => x.CreateDate)
                 .ToList();
         }

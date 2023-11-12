@@ -15,6 +15,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ListTopicsComponent } from './list-topics/list-topics.component';
+import { TopicService } from './services/topic.service';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     HomeComponent,
     NavBarComponent,
     ListQueuesComponent,
-    ModalComponent
+    ModalComponent,
+    ListTopicsComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +39,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatSnackBarModule
   ],
   providers: [
-    QueueService
+    QueueService,
+    TopicService
   ],
   bootstrap: [AppComponent]
 })
