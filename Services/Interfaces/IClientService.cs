@@ -6,8 +6,8 @@ namespace Services.Interfaces
     {
         Task CreateClient(CreateClientViewModel clientViewModel);
         Task DeleteClient(Guid id);
-        Task<ReadClientViewModel> GetClient(Guid id);
-        Task<List<ReadClientViewModel>> GetAllClient();
+        Task<ReadAllClientViewModel> GetClient(Guid id);
+        Task<List<ReadAllClientViewModel>> GetAllClient();
         Task SubscribeTopic(SubscribeTopicViewModel subscribeTopicViewModel);
     }
 }

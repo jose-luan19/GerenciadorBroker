@@ -33,6 +33,18 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSingleton<MessageConsumerService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<MessageConsumerService>());
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
@@ -40,6 +52,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowAngularApp");
+
+// ...
+
+//app.UseMvc();
 app.MigrationInitialization();
 
 app.UseHttpsRedirection();

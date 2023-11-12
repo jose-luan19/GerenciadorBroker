@@ -1,0 +1,43 @@
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Cor escura para o fundo */
+  z-index: 9999;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  z-index: 10000;
+  width: 300px;
+  max-width: 80%; /* Defina a largura máxima do modal conforme necessário */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Garante que o input se estenda na largura total */
+}
+
+h2 {
+  margin-top: 0; /* Remova a margem superior padrão do título */
+}
+
+.mat-form-field {
+  width: 100%; /* Garante que o input se estenda na largura total */
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.btn-danger {
+  margin-right: auto;
+}
+

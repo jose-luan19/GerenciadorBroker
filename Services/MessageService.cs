@@ -16,18 +16,21 @@ namespace Services
         private readonly IClientRepository _clientRepository;
         private readonly IClientTopicRepository _clientTopicRepository;
         private readonly ITopicRepository _topicRepository;
+        private readonly IQueueService _queueService;
         public MessageService
         (
         IMessageReceviedRepository messageRepository, 
         IClientRepository clientRepository,
         IClientTopicRepository clientTopicRepository,
-        ITopicRepository topicRepository
+        ITopicRepository topicRepository,
+        IQueueService queueService
         )
         {
             _messageRepository = messageRepository;
             _clientRepository = clientRepository;
             _clientTopicRepository = clientTopicRepository;
             _topicRepository = topicRepository;
+            _queueService = queueService;
         }
         public async Task SaveMessage(string json)
         {

@@ -59,15 +59,16 @@ namespace Services
             {
                 throw new NotFoundException("O Client não foi encontrado.");
             }
-            await _queueService.DeleteQueue(client.QueueId);
+            _clientRepository.Delete(client);
+            _clientRepository.Commit();
         }
 
-        public async Task<List<ReadClientViewModel>> GetAllClient()
+        public async Task<List<ReadAllClientViewModel>> GetAllClient()
         {
-            return _mapper.Map<List<ReadClientViewModel>>(await _clientRepository.GetAllInclude());
+            return _mapper.Map<List<ReadAllClientViewModel>>(await _clientRepository.GetAllInclude());
         }
 
-        public async Task<ReadClientViewModel> GetClient(Guid id)
+        public async Task<ReadAllClientViewModel> GetClient(Guid id)
         {
             throw new NotImplementedException();
         }

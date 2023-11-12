@@ -43,9 +43,6 @@ namespace Services
                 _topicRepository.Insert(topic);
                 _topicRepository.Commit();
             }
-
-            await TopicBindQueues(topicViewModel.QueuesName, topic);
-
         }
 
         public async Task DeleteTopic(string topicName)

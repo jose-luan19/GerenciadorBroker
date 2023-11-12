@@ -4,6 +4,8 @@
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public ReadClientQueueViewModel Client { get; set; }
+        public string ClientName { get; set; }
+        public List<string> TopicsNames { get; set; }
+        public DateTime CreateDate { get; set; }
     }
 }

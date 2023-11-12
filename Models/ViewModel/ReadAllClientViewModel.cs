@@ -1,6 +1,6 @@
 ﻿namespace Models.ViewModel
 {
-    public class ReadClientViewModel
+    public class ReadAllClientViewModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

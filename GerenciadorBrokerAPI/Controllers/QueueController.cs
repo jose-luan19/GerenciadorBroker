@@ -1,4 +1,5 @@
 using CrossCouting;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.ViewModel;
 using Services.Interfaces;
@@ -22,6 +23,7 @@ namespace GerenciadorBrokerAPI.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateQueue([FromQuery] CreateQueueViewModel queue)
         {
             try
@@ -45,6 +47,10 @@ namespace GerenciadorBrokerAPI.Controllers
             catch (NotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch(DeleteException ex)
+            {
+                return BadRequest(ex.Message);
             }
             return NoContent();
         }

@@ -7,13 +7,16 @@ namespace Models.Mapper
     {
         public ModelByViewModelMapping()
         {
-            CreateMap<ReadClientViewModel, Client>().ReverseMap();
+            CreateMap<ReadAllClientViewModel, Client>().ReverseMap();
             CreateMap<Client, ReadClientQueueViewModel>()
                 .ForMember(dest => dest.ClientId , opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ClientName , opt => opt.MapFrom(src => src.Name));
-            CreateMap<Queues, ReadAllQueueViewModel>().ReverseMap();
+
+            CreateMap<Queues, ReadAllQueueViewModel>()
+                .ForMember(dest => dest.TopicsNames, opt => opt.MapFrom(src => src.QueueTopics.Select(qt => qt.Topic.Name).ToList()))
+                .ForMember(dest => dest.ClientName, opt => opt.MapFrom(src => src.Client.Name));
             CreateMap<Queues, ReadQueueViewModel>().ReverseMap();
-            //CreateMap<Topic, ReadAllTopicsViewModel>().ReverseMap();
+
             CreateMap<QueueTopic, ReadQueueViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Queues.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Queues.Name));

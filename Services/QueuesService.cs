@@ -37,11 +37,15 @@ namespace Services
         public async Task DeleteQueue(Guid idQueue)
         {
 
-            Queues queue = _repository.GetById(idQueue);
+            Queues queue = await _repository.GetByIdIncludeClient(idQueue);
 
             if (queue == null)
             {
                 throw new NotFoundException("A fila não foi encontrada.");
+            }
+            if(queue.Client != null) 
+            {
+                throw new DeleteException("Fila não pode ser excluida pois já pertence a um cliente");
             }
             ConfigRabbitMQ.Channel.QueueDelete(queue: queue.Name);
             _repository.Delete(queue);
