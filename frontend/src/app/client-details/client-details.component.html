@@ -1,1 +1,102 @@
-<p>client-details works!</p>
+<header class="text-center mt-5">
+  <div class="row justify-content-center align-items-center">
+    <div *ngIf="currentClient" class="col-auto">
+      <h1 class="display-5">DETLHAES CLIENTE {{ currentClient.name }}</h1>
+    </div>
+  </div>
+</header>
+
+<div class="d-flex justify-content-center">
+  <div class="space-table">
+    <header class="text-center mt-5">
+      <div class="row justify-content-center align-items-center">
+        <div *ngIf="currentClient" class="col-auto">
+          <h3 class="display-7">OUTROS CLIENTES</h3>
+        </div>
+      </div>
+    </header>
+
+    <table class="table container-xl" style="margin-bottom: 75px;">
+      <thead>
+        <tr>
+          <th scope="col">Nome</th>
+          <th class="image">Ação</th>
+          <!-- <th>#</th>
+          <th></th>
+          <th class="image">Ação</th> -->
+        </tr>
+      </thead>
+      <tbody *ngIf="currentClient" class="table-group-divider">
+        <tr *ngFor="let item of listClients; let i=index;">
+          <td>{{ item.name }}</td>
+          <td id="clients-button">
+            <button type="button" class="btn btn-second">
+              <i class="bi bi-send"></i> ENVIAR MENSAGEM
+            </button>
+          </td>
+          <!-- (click)="navigateToDetails( item.id )" -->
+        </tr>
+
+
+      </tbody>
+    </table>
+  </div>
+  <div class="space-table">
+    <header class="text-center mt-5">
+      <div class="row justify-content-center align-items-center">
+        <div *ngIf="currentClient" class="col-auto">
+          <h3 class="display-7">TÓPICOS</h3>
+        </div>
+      </div>
+    </header>
+
+    <table class="table container-xl" style="margin-bottom: 75px;">
+      <thead>
+        <tr>
+          <th scope="col">Nome</th>
+          <th class="image">Ação</th>
+          <!-- <th>#</th>
+          <th></th>-->
+        </tr>
+      </thead>
+      <tbody *ngIf="listTopics" class="table-group-divider">
+        <tr *ngFor="let item of listTopics; let i=index;">
+          <td>{{ item.name }}</td>
+          <td id="topics-button">
+            <button *ngIf="!topicsSubscribe(item.id)" type="button" class="btn btn-primary" id>
+              <i class="bi bi-info-circle"></i> ASSINAR
+            </button>
+            <button type="button" class="btn btn-second" id="send-message">
+              <i class="bi bi-send"></i> ENVIAR MENSAGEM
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<header class="text-center mt-5">
+  <div class="row justify-content-center align-items-center">
+    <div *ngIf="currentClient" class="col-auto">
+      <h3 class="display-7">MESSAGES RECEBIDAS</h3>
+    </div>
+  </div>
+</header>
+
+<table class="table container-xl" style="margin-bottom: 75px;">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th scope="col">Message</th>
+      <th>Data de envio</th>
+    </tr>
+  </thead>
+  <tbody *ngIf="currentClient" class="table-group-divider">
+    <tr *ngFor="let item of currentClient.messages; let i=index;">
+      <td>{{ i+1 }}</td>
+      <td>{{ item.body }}</td>
+      <td>{{ item.sendMessageDateFormat }}</td>
+    </tr>
+  </tbody>
+</table>

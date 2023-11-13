@@ -68,9 +68,11 @@ namespace Services
             return _mapper.Map<List<ReadAllClientViewModel>>(await _clientRepository.GetAllInclude());
         }
 
-        public async Task<ReadAllClientViewModel> GetClient(Guid id)
+        public async Task<ReadDetailsClientViewModel> GetClient(Guid id)
         {
-            throw new NotImplementedException();
+            var clientDetails = await _clientRepository.GetDetailsById(id);
+
+            return _mapper.Map<ReadDetailsClientViewModel>(clientDetails);
         }
 
         public async Task SubscribeTopic(SubscribeTopicViewModel subscribeTopicViewModel)

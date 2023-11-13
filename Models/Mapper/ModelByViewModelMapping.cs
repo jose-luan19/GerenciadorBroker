@@ -16,6 +16,12 @@ namespace Models.Mapper
             CreateMap<Topic, ReadAllTopicsViewModel>()
                 .ForMember(dest => dest.ClientNames, opt => opt.MapFrom(src => src.ClientTopic.Select(qt => qt.Client.Name).ToList()));
 
+            CreateMap<Client, ReadDetailsClientViewModel>()
+                .ForMember(dest => dest.Messages, opt => opt.MapFrom(src => src.Messages))
+                .ForMember(dest => dest.Topics, opt => opt.MapFrom(src => src.ClientTopic.Select(qt => qt.Topic).ToList()));
+            CreateMap<MessageRecevied, ReadMessageViewModel>();
+            CreateMap<Topic, ReadTopicViewModel>();
+
 /*            CreateMap<Client, ReadClientQueueViewModel>()
                 .ForMember(dest => dest.ClientId , opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ClientName , opt => opt.MapFrom(src => src.Name));*/

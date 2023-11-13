@@ -24,6 +24,15 @@ namespace Infra.Repository
             .Where(c => c.ClientTopic.Any(ct => ct.Topic.Name == topicName && ct.Topic.RoutingKey == RoutingKey))
             .Select(c => c.Id)
             .ToList();
-        
+
+        public async Task<Client> GetDetailsById(Guid id)
+        {
+            return _dbSet
+                .Include(x => x.Messages)
+                .Include(x => x.Queue)
+                .Include(x => x.ClientTopic)
+                    .ThenInclude(x => x.Topic)
+                .First(x => x.Id == id);
+        }
     }
 }

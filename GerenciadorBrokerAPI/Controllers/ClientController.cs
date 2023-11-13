@@ -15,11 +15,11 @@ namespace GerenciadorBrokerAPI.Controllers
             _clientService = clientService;
         }
 
-        /*[HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetClient(Guid id)
         {
-            return Ok(await _messageService.GetClient(id));
-        }*/
+            return Ok(await _clientService.GetClient(id));
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetClient()

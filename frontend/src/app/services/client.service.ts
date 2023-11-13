@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Client } from '../interfaces/client';
 import { Response } from '../interfaces/response';
+import { ClientDetails } from '../interfaces/clientDetails';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,10 @@ export class ClientService {
   createClient(name: string){
     const urlPost = this.url+`?Name=${name}`
     return this.httpClient.post<Response>(urlPost,{})
+  }
+
+  getDetailsClient(id: string){
+    return this.httpClient.get<ClientDetails>(this.url + id);
   }
 
 }
