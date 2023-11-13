@@ -1,0 +1,26 @@
+tr{
+  text-align: center;
+}
+
+th{
+  text-align: center;
+}
+.topics-list {
+  padding: 0; /* Remover o preenchimento padrão da lista */
+  list-style-type: none; /* Remover os pontos padrão da lista */
+}
+
+.topics-list-item {
+  margin-left: 8px; /* Ajustar a margem à esquerda para compensar o ponto */
+}
+#buttonCreate{
+  margin-left: 40rem;
+}
+
+#space{
+  padding-left: 6rem;
+}
+
+#buttonDelete{
+  margin-left: 18px;
+}

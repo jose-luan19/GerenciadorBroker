@@ -51,7 +51,7 @@ export class ListTopicsComponent implements OnInit{
       }
     );
   }
-  openDialog(title: string, placeholderName: string, routingKey: string): void {
+  createTopic(title: string, placeholderName: string, routingKey: string): void {
     const dialogRef = this.dialog.open(ModalComponent, {
       width: '300px',
       data: {
@@ -76,17 +76,13 @@ export class ListTopicsComponent implements OnInit{
             }
           }
         );
-      // this.getData();
-      // this.cdr.detectChanges();
-      // this.openSnackBar(`Tópico criado`, 'Fechar', true);
-
     });
   }
   openSnackBar(message: string, action: string, sucess: boolean = false) {
     this.snackBar.open(message, action, {
-        duration: 6000, // Tempo em milissegundos que o alerta será exibido
-        verticalPosition: 'bottom', // Posição vertical do alerta
-        horizontalPosition: 'end', // Posição horizontal do alerta
+        duration: 6000,
+        verticalPosition: 'bottom',
+        horizontalPosition: 'end',
         panelClass: sucess ? ['success-snackbar'] : ['warning-snackbar']
     });
 }

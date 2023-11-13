@@ -1,0 +1,41 @@
+<header class="text-center mt-5">
+  <div class="row justify-content-center align-items-center">
+    <div class="col-auto">
+      <h1 class="display-5">CLIENTES</h1>
+    </div>
+    <div class="col-auto" id="buttonCreate">
+      <button mat-raised-button  class="btn btn-success" (click)="createClient('CRIAR CLIENTE', 'Nome do cliente')">
+        <i class="bi bi-plus"></i> Criar Cliente
+      </button>
+    </div>
+  </div>
+</header>
+
+<table class="table container-xl" style="margin-bottom: 75px;">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th></th>
+      <th scope="col">Nome</th>
+
+      <th class="image">Ação</th>
+    </tr>
+  </thead>
+  <tbody class="table-group-divider">
+    <tr *ngFor="let item of list; let i=index;">
+      <td>{{ i+1 }}</td>
+      <td id="space"></td>
+      <td>{{ item.name }}</td>
+      <td>
+        <button type="button" class="btn btn-primary" (click)="navigateToDetails( item.id )">
+          <i class="bi bi-info-circle"></i> Detalhes
+        </button>
+        <button type="button" class="btn btn-danger" id="buttonDelete" (click)="clickDeleteClient(item.id)">
+          <i class="bi bi-trash"></i> Excluir
+        </button>
+    </td>
+    </tr>
+
+
+  </tbody>
+</table>

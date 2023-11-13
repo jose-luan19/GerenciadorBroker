@@ -1,5 +1,7 @@
 export interface Client {
   id: string
-  nome: string
-  topic: string
+  name: string
+  createDate: string
+  messages: string[]
+  // queueName: string
 }

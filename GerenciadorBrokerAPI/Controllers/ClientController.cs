@@ -38,7 +38,7 @@ namespace GerenciadorBrokerAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            return Created("", clientViewModel.Name);
+            return Created("", clientViewModel);
         }
 
         [HttpDelete("{id}")]

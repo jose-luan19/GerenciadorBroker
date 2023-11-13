@@ -1,45 +1,46 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { QueueService } from '../services/queue.service';
-import { Queue } from '../interfaces/queue';
 import { MatDialog } from '@angular/material/dialog';
-import { ModalComponent } from '../component/modal/modal.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ModalComponent } from '../component/modal/modal.component';
+import { ClientService } from './../services/client.service';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Client } from '../interfaces/client';
 import { Response } from '../interfaces/response';
-
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-list-queues',
-  templateUrl: './list-queues.component.html',
-  styleUrls: ['./list-queues.component.css']
+  selector: 'app-list-clients',
+  templateUrl: './list-clients.component.html',
+  styleUrls: ['./list-clients.component.css']
 })
-export class ListQueuesComponent implements OnInit {
+export class ListClientsComponent implements OnInit{
   constructor(
-    private queueService: QueueService,
+    private clientService: ClientService,
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
     ){}
 
-  public list: Queue[] = [];
+  public list: Client[] = [];
 
   ngOnInit(): void {
     this.getData();
   }
 
   getData(){
-    this.queueService.getAll().subscribe((queues: Queue[])=>{
-      this.list = queues.sort((a, b) => {
+    this.clientService.getAll().subscribe((clients: Client[])=>{
+      this.list = clients.sort((a, b) => {
         const dateA = new Date(a.createDate);
         const dateB = new Date(b.createDate);
         return dateA.getTime() - dateB.getTime();
       });
     });
   }
-  clickDeleteQueue(id: string){
-    this.queueService.deleteQueue(id).subscribe(
+  clickDeleteClient(id: string){
+    this.clientService.deleteClient(id).subscribe(
       (response) => {
         console.log('Delete successful', response);
-        this.openSnackBar('Fila excluída', 'Fechar', true);
+        this.openSnackBar('Cliente excluído', 'Fechar', true);
         this.getData();
         this.cdr.detectChanges();
       },
@@ -50,7 +51,7 @@ export class ListQueuesComponent implements OnInit {
       }
     );
   }
-  createQueue(title: string, parameterString: string ): void {
+  createClient(title: string, parameterString: string ): void {
     const dialogRef = this.dialog.open(ModalComponent, {
       width: '300px',
       data: {
@@ -61,10 +62,10 @@ export class ListQueuesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('O modal foi fechado. Dados: ', result);
-      this.queueService.createQueue(result.name).subscribe(
+      this.clientService.createClient(result.name).subscribe(
         (response: Response) => {
-          console.log('Fila criada', response);
-          this.openSnackBar(`Fila \'${response.name}\' criada`, 'Fechar', true);
+          console.log('Cliente criada', response);
+          this.openSnackBar(`Cliente \'${response.name}\' criado`, 'Fechar', true);
           this.getData();
           this.cdr.detectChanges();
         },
@@ -83,6 +84,10 @@ export class ListQueuesComponent implements OnInit {
         horizontalPosition: 'end', // Posição horizontal do alerta
         panelClass: sucess ? ['success-snackbar'] : ['warning-snackbar']
     });
+  }
+  navigateToDetails(clientId: string) {
+    // Aqui você deve navegar para a rota de detalhes do modelo
+    this.router.navigate(['/client-details', clientId]);
   }
 
 }

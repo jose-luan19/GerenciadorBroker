@@ -1,6 +1,6 @@
 <div class="modal-background"></div>
     <div class="modal-container">
-      <h2 mat-dialog-title>{{ data.title }}</h2>
+      <h2 id="title" mat-dialog-title>{{ data.title }}</h2>
       <mat-dialog-content>
         <mat-form-field>
           <input matInput [(ngModel)]="data.name" [placeholder]="data.parameterPlaceholder">
