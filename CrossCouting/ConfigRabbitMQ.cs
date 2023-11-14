@@ -1,18 +1,35 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Configuration;
+using RabbitMQ.Client;
 
 namespace CrossCouting
 {
-    public static class ConfigRabbitMQ
+    public class ConfigRabbitMQ
     {
-        private static readonly ConnectionFactory factory = new ConnectionFactory
+        private readonly IConfiguration _configuration;
+        private readonly string _host;
+        public ConfigRabbitMQ(IConfiguration configuration)
         {
-            HostName = "localhost",
-            Port = 5672,
-            UserName = "guest",
-            Password = "guest"
-        };
-        private static readonly IConnection connection = factory.CreateConnection();
+            _configuration = configuration;
+            _host = _configuration["ServerRabbitMQ"];
+            configure();
+        }
 
-        public static IModel Channel { get; } = connection.CreateModel();
+        private ConnectionFactory factory;
+        private IConnection connection;
+        public IModel Channel { get; private set; } 
+
+        private void configure()
+        {
+            factory = new ConnectionFactory
+            {
+                HostName = _host,
+                Port = 5672,
+                UserName = "guest",
+                Password = "guest"
+            };
+            connection = factory.CreateConnection();
+            Channel = connection.CreateModel();
+        }
+
     }
 }

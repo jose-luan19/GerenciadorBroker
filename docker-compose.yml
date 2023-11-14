@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  gerenciadorbrokerapi:
+    image: ${DOCKER_REGISTRY-}gerenciadorbrokerapi
+    restart: always
+    build:
+      context: .
+      dockerfile: GerenciadorBrokerAPI/Dockerfile
+
+  db:
+    image: mysql
+    restart: always
+    ports:
+      - "4000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmqGerenciador
+    restart: always
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - 4200:4200
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules

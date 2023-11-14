@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infra", "Infra\Infra.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{B01EEA76-576B-4FF1-ADE6-504B1A86991C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{ECEA84DF-C4C4-40C3-B195-12EB3E575CFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{ECEA84DF-C4C4-40C3-B195-12EB3E575CFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossCouting", "CrossCouting\CrossCouting.csproj", "{6B1E33D2-6F15-4C0D-93B0-5155225BA0EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossCouting", "CrossCouting\CrossCouting.csproj", "{6B1E33D2-6F15-4C0D-93B0-5155225BA0EF}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{57C32D29-E00E-4E13-A6CA-F2B81F9289C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{6B1E33D2-6F15-4C0D-93B0-5155225BA0EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B1E33D2-6F15-4C0D-93B0-5155225BA0EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B1E33D2-6F15-4C0D-93B0-5155225BA0EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57C32D29-E00E-4E13-A6CA-F2B81F9289C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57C32D29-E00E-4E13-A6CA-F2B81F9289C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57C32D29-E00E-4E13-A6CA-F2B81F9289C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57C32D29-E00E-4E13-A6CA-F2B81F9289C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

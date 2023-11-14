@@ -17,13 +17,15 @@ namespace Services
         private readonly IClientTopicRepository _clientTopicRepository;
         private readonly ITopicRepository _topicRepository;
         private readonly IQueueService _queueService;
+        private readonly ConfigRabbitMQ _configRabbitMQ;
         public MessageService
         (
         IMessageReceviedRepository messageRepository, 
         IClientRepository clientRepository,
         IClientTopicRepository clientTopicRepository,
         ITopicRepository topicRepository,
-        IQueueService queueService
+        IQueueService queueService, 
+        ConfigRabbitMQ configRabbitMQ
         )
         {
             _messageRepository = messageRepository;
@@ -31,6 +33,7 @@ namespace Services
             _clientTopicRepository = clientTopicRepository;
             _topicRepository = topicRepository;
             _queueService = queueService;
+            _configRabbitMQ = configRabbitMQ;
         }
         public async Task SaveMessage(string json)
         {
@@ -75,12 +78,12 @@ namespace Services
             if (createMessageViewModel.ClientId != null)
             {
                 var client = _clientRepository.GetById(createMessageViewModel.ClientId);
-                ConfigRabbitMQ.Channel
+                _configRabbitMQ.Channel
                     .BasicPublish(exchange: "", routingKey: client.Queue.Name, body: body);
                 return;
             }
             var topic = _topicRepository.GetById(createMessageViewModel.TopicId);
-            ConfigRabbitMQ.Channel
+            _configRabbitMQ.Channel
                 .BasicPublish
                 (
                     exchange: topic.Name, 
@@ -93,7 +96,7 @@ namespace Services
         {
             uint count = 0;
             var queues = await _queueService.GetAllQueues();
-            queues.ForEach(q => { count += ConfigRabbitMQ.Channel.MessageCount(q.Name); });
+            queues.ForEach(q => { count += _configRabbitMQ.Channel.MessageCount(q.Name); });
             return count;
         }
     }

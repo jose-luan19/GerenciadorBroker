@@ -14,18 +14,21 @@ namespace Services
         private readonly IQueueTopicRepository _queueTopicRepository;
         private readonly IQueueRepository _queueRepository;
         private readonly IMapper _mapper;
+        private readonly ConfigRabbitMQ _configRabbitMQ;
         public TopicService
             (
             ITopicRepository topicRepository,
             IQueueTopicRepository queueTopicRepository,
             IQueueRepository queueRepository,
-            IMapper mapper
+            IMapper mapper,
+            ConfigRabbitMQ configRabbitMQ
             )
         {
             _topicRepository = topicRepository;
             _queueTopicRepository = queueTopicRepository;
             _queueRepository = queueRepository;
             _mapper = mapper;
+            _configRabbitMQ = configRabbitMQ;
         }
 
         public async Task CreateTopic(CreateTopicViewModel topicViewModel)
@@ -39,7 +42,7 @@ namespace Services
                     Name = topicViewModel.Name,
                     RoutingKey = topicViewModel.RoutingKey,
                 };
-                ConfigRabbitMQ.Channel.ExchangeDeclare(exchange: topicViewModel.Name, type: "topic", durable: true, autoDelete: false);
+                _configRabbitMQ.Channel.ExchangeDeclare(exchange: topicViewModel.Name, type: "topic", durable: true, autoDelete: false);
                 _topicRepository.Insert(topic);
                 _topicRepository.Commit();
             }
@@ -52,7 +55,7 @@ namespace Services
             {
                 throw new NotFoundException("O Topico não foi encontrado.");
             }
-            ConfigRabbitMQ.Channel.ExchangeDelete(topicName);
+            _configRabbitMQ.Channel.ExchangeDelete(topicName);
 
             _topicRepository.DeleteRange(topicDelete);
             _topicRepository.Commit();
@@ -88,9 +91,9 @@ namespace Services
                         QueueTopic newQueueTopic = new() { QueuesId = queue.Id, TopicId = topic.Id };
                         newQueues.Add(queue);
                         newQueuesTopic.Add(newQueueTopic);
-                        ConfigRabbitMQ.Channel.QueueDeclare(queue: queue.Name, exclusive: false, durable: true, autoDelete: false);
+                        _configRabbitMQ.Channel.QueueDeclare(queue: queue.Name, exclusive: false, durable: true, autoDelete: false);
                     }
-                    ConfigRabbitMQ.Channel.QueueBind(queue: queue.Name, exchange: topic.Name, routingKey: topic.RoutingKey);
+                    _configRabbitMQ.Channel.QueueBind(queue: queue.Name, exchange: topic.Name, routingKey: topic.RoutingKey);
                 }
                 if (newQueues.Count > 0)
                 {

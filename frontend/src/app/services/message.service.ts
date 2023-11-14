@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 export class MessageService {
 
   constructor(private httpClient: HttpClient) { }
-  private url = environment.apiUrl + "Message/";
+  private url = environment.apiUrlHTTPS + "Message/";
 
   sendMessage(obj: Object){
     return this.httpClient.post(this.url,obj)

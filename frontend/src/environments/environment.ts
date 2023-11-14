@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:5000/',
-  apiRabbitMQUrl: 'http://localhost:15672/api/',
+  apiUrlHTTPS: 'https://localhost:5000/',
+  apiUrlHTTP: 'http://localhost:5005/',
 };
 
 /*

@@ -12,10 +12,13 @@ namespace Services
     {
         private readonly IQueueRepository _repository;
         private readonly IMapper _mapper;
-        public QueueService(IQueueRepository repository, IMapper mapper)
+        private readonly ConfigRabbitMQ _configRabbitMQ;
+
+        public QueueService(IQueueRepository repository, IMapper mapper, ConfigRabbitMQ configRabbitMQ)
         {
             _repository = repository;
             _mapper = mapper;
+            _configRabbitMQ = configRabbitMQ;
         }
 
         public async Task<Queues> CreateQueue(CreateQueueViewModel queue)
@@ -24,7 +27,7 @@ namespace Services
             {
                 throw new AlreadyExistExpection("Fila já existe");
             }
-            ConfigRabbitMQ.Channel.QueueDeclare(queue: queue.Name, durable: true, exclusive: false, autoDelete: false);
+            _configRabbitMQ.Channel.QueueDeclare(queue: queue.Name, durable: true, exclusive: false, autoDelete: false);
             Queues newQueue = new Queues
             {
                 Name = queue.Name
@@ -47,7 +50,7 @@ namespace Services
             {
                 throw new DeleteException("Fila não pode ser excluida pois já pertence a um cliente");
             }
-            ConfigRabbitMQ.Channel.QueueDelete(queue: queue.Name);
+            _configRabbitMQ.Channel.QueueDelete(queue: queue.Name);
             _repository.Delete(queue);
             _repository.Commit();
         }
@@ -55,7 +58,7 @@ namespace Services
         public async Task DeleteQueueAfterClient(Guid idQueue)
         {
             Queues queue = await _repository.GetByIdIncludeClient(idQueue);
-            ConfigRabbitMQ.Channel.QueueDelete(queue: queue.Name);
+            _configRabbitMQ.Channel.QueueDelete(queue: queue.Name);
             _repository.Delete(queue);
             _repository.Commit();
         }
