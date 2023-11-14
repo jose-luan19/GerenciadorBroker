@@ -52,6 +52,14 @@ namespace Services
             _repository.Commit();
         }
 
+        public async Task DeleteQueueAfterClient(Guid idQueue)
+        {
+            Queues queue = await _repository.GetByIdIncludeClient(idQueue);
+            ConfigRabbitMQ.Channel.QueueDelete(queue: queue.Name);
+            _repository.Delete(queue);
+            _repository.Commit();
+        }
+
         public async Task<List<ReadAllQueueViewModel>> GetAllQueues()
         {
             return _mapper.Map<List<ReadAllQueueViewModel>>(await _repository.GetAllInclude());

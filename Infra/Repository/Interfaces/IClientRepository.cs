@@ -6,5 +6,6 @@ namespace Infra.Repository.Interfaces
     {
         Task<List<Client>> GetAllInclude();
         Task<Client> GetDetailsById(Guid id);
+        Task<List<Client>> GetAllOnline();
     }
 }

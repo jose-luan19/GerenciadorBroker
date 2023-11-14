@@ -76,7 +76,7 @@ namespace Services
             {
                 var client = _clientRepository.GetById(createMessageViewModel.ClientId);
                 ConfigRabbitMQ.Channel
-                    .BasicPublish(exchange: "", routingKey: client.Name + ".QUEUE", body: body);
+                    .BasicPublish(exchange: "", routingKey: client.Queue.Name, body: body);
                 return;
             }
             var topic = _topicRepository.GetById(createMessageViewModel.TopicId);
@@ -87,7 +87,14 @@ namespace Services
                     routingKey: topic.RoutingKey, 
                     body: body
                 );
+        }
 
+        public async Task<uint> GetCountMessagesInQueues()
+        {
+            uint count = 0;
+            var queues = await _queueService.GetAllQueues();
+            queues.ForEach(q => { count = ConfigRabbitMQ.Channel.MessageCount(q.Name); });
+            return count;
         }
     }
 }

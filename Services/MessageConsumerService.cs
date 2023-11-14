@@ -1,6 +1,7 @@
 ﻿using Infra.Repository.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Models;
 using Models.ViewModel;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -15,6 +16,8 @@ namespace CrossCouting
         private IClientRepository _clientRepository;
         private IMessageService _messageService;
         private readonly IServiceProvider _serviceProvider;
+        private List<Client> clientsOn;
+        private List<string> consumersTag = new List<string>();
 
         public MessageConsumerService(IServiceProvider serviceProvider)
         {
@@ -26,19 +29,34 @@ namespace CrossCouting
             {
                 _clientRepository = scope.ServiceProvider.GetRequiredService<IClientRepository>();
                 _messageService = scope.ServiceProvider.GetRequiredService<IMessageService>();
+                clientsOn = await _clientRepository.GetAllOnline();
+                var count = 1;
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var clients = await _clientRepository.GetAllInclude();
-                    foreach (var client in clients)
+                    var clientsCurrent = await _clientRepository.GetAllOnline();
+                    var consumer = new EventingBasicConsumer(ConfigRabbitMQ.Channel);
+                    consumer.Received += (model, ea) =>
                     {
-                        var consumer = new EventingBasicConsumer(ConfigRabbitMQ.Channel);
-                        consumer.Received += (model, ea) =>
+                        var body = ea.Body.ToArray();
+                        var json = Encoding.UTF8.GetString(body);
+                        _messageService.SaveMessage(json);
+                    };
+                    if(!clientsOn.SequenceEqual(clientsCurrent) || count == 1)
+                    {
+                        if(consumersTag.Count > 0)
                         {
-                            var body = ea.Body.ToArray();
-                            var json = Encoding.UTF8.GetString(body);
-                            _messageService.SaveMessage(json);
-                        };
-                        ConfigRabbitMQ.Channel.BasicConsume(queue: client.Queue.Name, autoAck: true, consumer: consumer);
+                            consumersTag.ForEach(client => { ConfigRabbitMQ.Channel.BasicCancel(client); });
+                            consumersTag.Clear();
+                        }
+                        clientsCurrent
+                            .ForEach(client => 
+                                { 
+                                    var consumerTag = ConfigRabbitMQ.Channel.BasicConsume(queue: client.Queue.Name, autoAck: true, consumer: consumer);
+                                    consumersTag.Add(consumerTag);
+                                }
+                            );
+                        count++;
+                        clientsOn = clientsCurrent;
                     }
                     await Task.Delay(2000, stoppingToken);
                 }

@@ -37,4 +37,8 @@ export class ClientService {
     return this.httpClient.get<ClientDetails>(this.url + id);
   }
 
+  subscribe(obj: Object){
+    return this.httpClient.post(this.url+"Subscribe",obj)
+  }
+
 }

@@ -20,6 +20,7 @@ import { TopicService } from './services/topic.service';
 import { ListClientsComponent } from './list-clients/list-clients.component';
 import { ClientService } from './services/client.service';
 import { ClientDetailsComponent } from './client-details/client-details.component';
+import { MessageService } from './services/message.service';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { ClientDetailsComponent } from './client-details/client-details.componen
   providers: [
     QueueService,
     TopicService,
-    ClientService
+    ClientService,
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

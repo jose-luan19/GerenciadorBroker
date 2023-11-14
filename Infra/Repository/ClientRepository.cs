@@ -17,6 +17,10 @@ namespace Infra.Repository
         {
             return _dbSet.Include(x => x.Queue).OrderBy(x => x.CreateDate).ToList();
         }
+        public async Task<List<Client>> GetAllOnline()
+        {
+            return _dbSet.Where(x => x.IsOnline == true).Include(x => x.Queue).OrderBy(x => x.CreateDate).ToList();
+        }
         public void Dispose() => GC.SuppressFinalize(this);
 
         public async Task<List<Guid>> GetIdClientsByTopicId(string topicName, string RoutingKey)

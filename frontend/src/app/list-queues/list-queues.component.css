@@ -11,8 +11,13 @@ th{
 }
 
 .topics-list-item {
-  margin-left: 8px; /* Ajustar a margem à esquerda para compensar o ponto */
+  margin-left: 8px;
 }
 #buttonCreate{
   margin-left: 40rem;
+}
+
+
+.messages-queue{
+  margin: 3rem;
 }

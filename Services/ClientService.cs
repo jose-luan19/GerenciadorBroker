@@ -61,6 +61,7 @@ namespace Services
             }
             _clientRepository.Delete(client);
             _clientRepository.Commit();
+            _queueService.DeleteQueueAfterClient(client.QueueId);
         }
 
         public async Task<List<ReadAllClientViewModel>> GetAllClient()

@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ModalComponent } from '../component/modal/modal.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Response } from '../interfaces/response';
+import { MessageService } from '../services/message.service';
 
 
 @Component({
@@ -15,15 +16,24 @@ import { Response } from '../interfaces/response';
 export class ListQueuesComponent implements OnInit {
   constructor(
     private queueService: QueueService,
+    private messageService: MessageService,
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
     private snackBar: MatSnackBar
     ){}
 
   public list: Queue[] = [];
+  public countMessages: number = 0;
 
   ngOnInit(): void {
+    this.getCountMessages();
     this.getData();
+  }
+
+  getCountMessages(){
+    this.messageService.getCountMessagesInRabbitMQ().subscribe((response) => {
+      this.countMessages = response;
+    });
   }
 
   getData(){
@@ -37,8 +47,7 @@ export class ListQueuesComponent implements OnInit {
   }
   clickDeleteQueue(id: string){
     this.queueService.deleteQueue(id).subscribe(
-      (response) => {
-        console.log('Delete successful', response);
+      () => {
         this.openSnackBar('Fila excluída', 'Fechar', true);
         this.getData();
         this.cdr.detectChanges();
@@ -60,20 +69,20 @@ export class ListQueuesComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('O modal foi fechado. Dados: ', result);
-      this.queueService.createQueue(result.name).subscribe(
-        (response: Response) => {
-          console.log('Fila criada', response);
-          this.openSnackBar(`Fila \'${response.name}\' criada`, 'Fechar', true);
-          this.getData();
-          this.cdr.detectChanges();
-        },
-        (error) => {
-          if(error.status === 400){
-            this.openSnackBar(error.error, 'Fechar');
+      if(result){
+        this.queueService.createQueue(result.name).subscribe(
+          (response: Response) => {
+            this.openSnackBar(`Fila \' ${response.name} \' criada`, 'Fechar', true);
+            this.getData();
+            this.cdr.detectChanges();
+          },
+          (error) => {
+            if(error.status === 400){
+              this.openSnackBar(error.error, 'Fechar');
+            }
           }
-        }
-      );
+        );
+      }
     });
   }
   openSnackBar(message: string, action: string, sucess: boolean = false) {

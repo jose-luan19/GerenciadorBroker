@@ -21,16 +21,13 @@
         <tr>
           <th scope="col">Nome</th>
           <th class="image">Ação</th>
-          <!-- <th>#</th>
-          <th></th>
-          <th class="image">Ação</th> -->
         </tr>
       </thead>
       <tbody *ngIf="currentClient" class="table-group-divider">
         <tr *ngFor="let item of listClients; let i=index;">
           <td>{{ item.name }}</td>
           <td id="clients-button">
-            <button type="button" class="btn btn-second">
+            <button type="button" class="btn btn-second" (click)="openModalMessageForClient(item.id, item.name)">
               <i class="bi bi-send"></i> ENVIAR MENSAGEM
             </button>
           </td>
@@ -55,18 +52,16 @@
         <tr>
           <th scope="col">Nome</th>
           <th class="image">Ação</th>
-          <!-- <th>#</th>
-          <th></th>-->
         </tr>
       </thead>
       <tbody *ngIf="listTopics" class="table-group-divider">
         <tr *ngFor="let item of listTopics; let i=index;">
           <td>{{ item.name }}</td>
           <td id="topics-button">
-            <button *ngIf="!topicsSubscribe(item.id)" type="button" class="btn btn-primary" id>
+            <button *ngIf="!topicsSubscribe(item.id)" type="button" class="btn btn-primary" (click)="subscribeInTopic(item.id, item.name)">
               <i class="bi bi-info-circle"></i> ASSINAR
             </button>
-            <button type="button" class="btn btn-second" id="send-message">
+            <button type="button" class="btn btn-second" id="send-message" (click)="openModalMessageForTopic(item.id, item.name)">
               <i class="bi bi-send"></i> ENVIAR MENSAGEM
             </button>
           </td>

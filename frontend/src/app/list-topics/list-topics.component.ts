@@ -38,8 +38,7 @@ export class ListTopicsComponent implements OnInit{
   }
   clickDeleteTopic(name: string){
     this.topicService.deleteTopic(name).subscribe(
-      (response) => {
-        console.log('Delete successful', response);
+      () => {
         this.openSnackBar('Tópico excluído', 'Fechar', true);
         this.getData();
         this.cdr.detectChanges();
@@ -62,20 +61,20 @@ export class ListTopicsComponent implements OnInit{
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('O modal foi fechado. Dados: ', result);
+      if(result){
         this.topicService.createTopic(result.name, result.routingKey).subscribe(
-          (response: Response) => {
-            console.log('Tópico criado', response);
-            this.getData();
-            this.cdr.detectChanges();
-            this.openSnackBar(`Tópico \'${response.name}\' criado`, 'Fechar', true);
-          },
-          (error) => {
-            if(error.status === 400){
-              this.openSnackBar(error.error, 'Fechar');
+            (response: Response) => {
+              this.getData();
+              this.cdr.detectChanges();
+              this.openSnackBar(`Tópico \' ${response.name} \' criado`, 'Fechar', true);
+            },
+            (error) => {
+              if(error.status === 400){
+                this.openSnackBar(error.error, 'Fechar');
+              }
             }
-          }
         );
+      }
     });
   }
   openSnackBar(message: string, action: string, sucess: boolean = false) {

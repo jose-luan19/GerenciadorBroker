@@ -12,6 +12,7 @@ export class QueueService {
 
   constructor(private httpClient: HttpClient) { }
   private url = environment.apiUrl + "Queue/";
+  private urlRabbit = environment.apiRabbitMQUrl + "queues";
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
   });
@@ -32,5 +33,4 @@ export class QueueService {
     const urlPost = this.url+`?Name=${name}`
     return this.httpClient.post<Response>(urlPost,{})
   }
-
 }

@@ -38,8 +38,7 @@ export class ListClientsComponent implements OnInit{
   }
   clickDeleteClient(id: string){
     this.clientService.deleteClient(id).subscribe(
-      (response) => {
-        console.log('Delete successful', response);
+      () => {
         this.openSnackBar('Cliente excluído', 'Fechar', true);
         this.getData();
         this.cdr.detectChanges();
@@ -61,20 +60,20 @@ export class ListClientsComponent implements OnInit{
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('O modal foi fechado. Dados: ', result);
-      this.clientService.createClient(result.name).subscribe(
-        (response: Response) => {
-          console.log('Cliente criada', response);
-          this.openSnackBar(`Cliente \'${response.name}\' criado`, 'Fechar', true);
-          this.getData();
-          this.cdr.detectChanges();
-        },
-        (error) => {
-          if(error.status === 400){
-            this.openSnackBar(error.error, 'Fechar');
+      if(result){
+        this.clientService.createClient(result.name).subscribe(
+          (response: Response) => {
+            this.openSnackBar(`Cliente \' ${response.name} \' criado`, 'Fechar', true);
+            this.getData();
+            this.cdr.detectChanges();
+          },
+          (error) => {
+            if(error.status === 400){
+              this.openSnackBar(error.error, 'Fechar');
+            }
           }
-        }
-      );
+        );
+      }
     });
   }
   openSnackBar(message: string, action: string, sucess: boolean = false) {

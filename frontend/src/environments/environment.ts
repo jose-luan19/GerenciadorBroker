@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'https://localhost:5000/',
+  apiRabbitMQUrl: 'http://localhost:15672/api/',
 };
 
 /*

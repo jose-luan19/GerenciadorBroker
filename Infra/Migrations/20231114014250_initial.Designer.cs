@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Migrations
 {
     [DbContext(typeof(DbContextClass))]
-    [Migration("20231111145031_initial")]
+    [Migration("20231114014250_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -30,6 +30,9 @@ namespace Infra.Migrations
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
