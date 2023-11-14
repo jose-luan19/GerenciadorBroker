@@ -3,5 +3,6 @@ export interface Client {
   name: string
   createDate: string
   messages: string[]
+  isOnline: boolean
   // queueName: string
 }

@@ -5,6 +5,7 @@ export interface ClientDetails {
   name: string
   createDate: string
   queueName: string
+  isOnline: boolean
   messages: MessageClient[]
   topics: Topic[]
 }

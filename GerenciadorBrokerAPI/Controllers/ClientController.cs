@@ -68,5 +68,19 @@ namespace GerenciadorBrokerAPI.Controllers
             }
             return Ok();
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ChangeStatus(Guid id)
+        {
+            try
+            {
+                await _clientService.ChangeStatus(id);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            return Ok();
+        }
     }
 }

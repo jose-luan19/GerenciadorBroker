@@ -33,6 +33,7 @@ export class ListQueuesComponent implements OnInit {
   getCountMessages(){
     this.messageService.getCountMessagesInRabbitMQ().subscribe((response) => {
       this.countMessages = response;
+      this.cdr.detectChanges();
     });
   }
 
@@ -50,7 +51,6 @@ export class ListQueuesComponent implements OnInit {
       () => {
         this.openSnackBar('Fila excluída', 'Fechar', true);
         this.getData();
-        this.cdr.detectChanges();
       },
       (error) => {
         if(error.status === 400){
@@ -74,7 +74,6 @@ export class ListQueuesComponent implements OnInit {
           (response: Response) => {
             this.openSnackBar(`Fila \' ${response.name} \' criada`, 'Fechar', true);
             this.getData();
-            this.cdr.detectChanges();
           },
           (error) => {
             if(error.status === 400){

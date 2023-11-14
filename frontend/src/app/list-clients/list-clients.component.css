@@ -24,3 +24,12 @@ th{
 #buttonDelete{
   margin-left: 18px;
 }
+.online{
+  color: #55b52f;
+}
+.offline{
+  color: rgb(202, 7, 7);
+}
+.center-actions{
+  width: 40%;
+}

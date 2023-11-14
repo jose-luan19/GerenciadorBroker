@@ -26,7 +26,6 @@ export class ClientDetailsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private router: Router
     )
     {}
 
@@ -38,20 +37,34 @@ export class ClientDetailsComponent implements OnInit {
   getDetails(id: string){
     this.clientService.getDetailsClient(id).subscribe((client: ClientDetails)=>{
       this.currentClient = client
+      this.currentClient.messages = this.currentClient.messages.sort((a, b) => {
+        const dateA = new Date(a.createDate);
+        const dateB = new Date(b.createDate);
+        return dateA.getTime() - dateB.getTime();
+      });
       this.formatarData();
       this.getOtherClients();
       this.getTopics();
+      this.cdr.detectChanges();
     });
   }
   getOtherClients(){
     this.clientService.getAll().subscribe((clients: Client[])=>{
-      this.listClients = clients.filter(item => item.id !== this.currentClient.id)
+      this.listClients = clients.filter(item => item.id !== this.currentClient.id).sort((a, b) => {
+        const dateA = new Date(a.createDate);
+        const dateB = new Date(b.createDate);
+        return dateA.getTime() - dateB.getTime();
+      });
     });
   }
 
-  async getTopics(){
+  getTopics(){
     this.topicService.getAll().subscribe((topics: Topic[])=>{
-      this.listTopics = topics;
+      this.listTopics = topics.sort((a, b) => {
+        const dateA = new Date(a.createDate);
+        const dateB = new Date(b.createDate);
+        return dateA.getTime() - dateB.getTime();
+      });;
     });
   }
 
@@ -60,9 +73,8 @@ export class ClientDetailsComponent implements OnInit {
     return exist;
   }
   ngOnInit(): void {
-    // Acesse o ID a partir do ActivatedRoute
     this.route.params.subscribe(params => {
-      this.currentId = params['id']; // 'id' é o nome do parâmetro definido na rota
+      this.currentId = params['id'];
       this.getDetails(this.currentId);
     });
   }
@@ -91,7 +103,6 @@ export class ClientDetailsComponent implements OnInit {
         this.messageService.sendMessage(obj).subscribe(
           () => {
             this.getDetails(this.currentId);
-            this.cdr.detectChanges();
             this.openSnackBar(`Mensagem enviada para \' ${nameClient} \'`, 'Fechar', true);
           },
           (error) => {
@@ -122,7 +133,6 @@ export class ClientDetailsComponent implements OnInit {
         this.messageService.sendMessage(obj).subscribe(
           () => {
             this.getDetails(this.currentId);
-            this.cdr.detectChanges();
             this.openSnackBar(`Mensagem enviada para tópico \' ${nameTopic} \'`, 'Fechar', true);
           },
           (error) => {
@@ -139,9 +149,8 @@ export class ClientDetailsComponent implements OnInit {
       topicId: idTopic,
       clientId: this.currentId
     }
-    this.clientService.subscribe(subscribe).subscribe(async () => {
-      await this.getTopics();
-      this.cdr.detectChanges();
+    this.clientService.subscribe(subscribe).subscribe(() => {
+      this.getDetails(this.currentId);
       this.openSnackBar(`Tópico \' ${nameTopic} \' assinadoo`, 'Fechar', true);
     });
   }
@@ -151,6 +160,13 @@ export class ClientDetailsComponent implements OnInit {
         verticalPosition: 'bottom',
         horizontalPosition: 'end',
         panelClass: sucess ? ['success-snackbar'] : ['warning-snackbar']
+    });
+  }
+
+  changeStatusClient(){
+    this.clientService.changeStatus(this.currentId).subscribe(()=>{
+      this.getDetails(this.currentId);
+      this.openSnackBar(`Cliente \' ${this.currentClient.name} \' mudou de STATUS`, 'Fechar', true);
     });
   }
 

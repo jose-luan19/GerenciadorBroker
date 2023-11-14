@@ -93,7 +93,7 @@ namespace Services
         {
             uint count = 0;
             var queues = await _queueService.GetAllQueues();
-            queues.ForEach(q => { count = ConfigRabbitMQ.Channel.MessageCount(q.Name); });
+            queues.ForEach(q => { count += ConfigRabbitMQ.Channel.MessageCount(q.Name); });
             return count;
         }
     }

@@ -40,5 +40,7 @@ export class ClientService {
   subscribe(obj: Object){
     return this.httpClient.post(this.url+"Subscribe",obj)
   }
-
+  changeStatus(id: string){
+    return this.httpClient.put(this.url+ id, {});
+  }
 }

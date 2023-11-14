@@ -1,4 +1,14 @@
-<header class="text-center mt-5">
+
+<div *ngIf="currentClient" class="div-button-on">
+  <h3 class="display-7 mb-1">CLIENTE {{ currentClient.isOnline ? 'ON' : 'OFF' }}</h3>
+  <button id="button-on" type="button" [ngClass]="!currentClient.isOnline ? 'btn btn-success' : 'btn btn-danger'"
+  (click)="changeStatusClient()">
+    <i class="bi bi-check-circle-fill"></i>
+    TURN {{ !currentClient.isOnline ? 'ON' : 'OFF' }}
+  </button>
+</div>
+
+<header class="text-center mt-2">
   <div class="row justify-content-center align-items-center">
     <div *ngIf="currentClient" class="col-auto">
       <h1 class="display-5">DETLHAES CLIENTE {{ currentClient.name }}</h1>
@@ -51,12 +61,14 @@
       <thead>
         <tr>
           <th scope="col">Nome</th>
+          <th scope="col">Rota</th>
           <th class="image">Ação</th>
         </tr>
       </thead>
       <tbody *ngIf="listTopics" class="table-group-divider">
         <tr *ngFor="let item of listTopics; let i=index;">
           <td>{{ item.name }}</td>
+          <td>{{ item.routingKey }}</td>
           <td id="topics-button">
             <button *ngIf="!topicsSubscribe(item.id)" type="button" class="btn btn-primary" (click)="subscribeInTopic(item.id, item.name)">
               <i class="bi bi-info-circle"></i> ASSINAR

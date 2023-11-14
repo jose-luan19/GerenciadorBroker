@@ -34,6 +34,7 @@ export class ListClientsComponent implements OnInit{
         const dateB = new Date(b.createDate);
         return dateA.getTime() - dateB.getTime();
       });
+      this.cdr.detectChanges();
     });
   }
   clickDeleteClient(id: string){
@@ -41,7 +42,6 @@ export class ListClientsComponent implements OnInit{
       () => {
         this.openSnackBar('Cliente excluído', 'Fechar', true);
         this.getData();
-        this.cdr.detectChanges();
       },
       (error) => {
         if(error.status === 400){
@@ -65,7 +65,6 @@ export class ListClientsComponent implements OnInit{
           (response: Response) => {
             this.openSnackBar(`Cliente \' ${response.name} \' criado`, 'Fechar', true);
             this.getData();
-            this.cdr.detectChanges();
           },
           (error) => {
             if(error.status === 400){

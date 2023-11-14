@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, NgZone  } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit  } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ModalComponent } from '../component/modal/modal.component';
@@ -17,8 +17,7 @@ export class ListTopicsComponent implements OnInit{
     private topicService: TopicService,
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private zone: NgZone
+    private snackBar: MatSnackBar
     ){}
 
   public list: Topic[] = [];
@@ -34,6 +33,7 @@ export class ListTopicsComponent implements OnInit{
         const dateB = new Date(b.createDate);
         return dateA.getTime() - dateB.getTime();
       });
+      this.cdr.detectChanges();
     });
   }
   clickDeleteTopic(name: string){
@@ -41,7 +41,6 @@ export class ListTopicsComponent implements OnInit{
       () => {
         this.openSnackBar('Tópico excluído', 'Fechar', true);
         this.getData();
-        this.cdr.detectChanges();
       },
       (error) => {
         if(error.status === 400){
@@ -65,7 +64,6 @@ export class ListTopicsComponent implements OnInit{
         this.topicService.createTopic(result.name, result.routingKey).subscribe(
             (response: Response) => {
               this.getData();
-              this.cdr.detectChanges();
               this.openSnackBar(`Tópico \' ${response.name} \' criado`, 'Fechar', true);
             },
             (error) => {

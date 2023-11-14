@@ -41,7 +41,7 @@ namespace CrossCouting
                         var json = Encoding.UTF8.GetString(body);
                         _messageService.SaveMessage(json);
                     };
-                    if(!clientsOn.SequenceEqual(clientsCurrent) || count == 1)
+                    if((!clientsOn.SequenceEqual(clientsCurrent) || count == 1)&& clientsCurrent.Count > 0)
                     {
                         if(consumersTag.Count > 0)
                         {

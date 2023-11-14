@@ -101,5 +101,13 @@ namespace Services
             _clientTopicRepository.Insert(newClientTopic);
             _clientTopicRepository.Commit();
         }
+        public async Task ChangeStatus(Guid id)
+        {
+            var client = _clientRepository.GetById(id);
+            client.IsOnline = !client.IsOnline;
+            _clientRepository.Update(client);
+            _clientRepository.Commit();
+        }
+
     }
 }
