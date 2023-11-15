@@ -1,4 +1,5 @@
 ﻿using Infra.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace Infra.Repository
@@ -11,7 +12,13 @@ namespace Infra.Repository
 
         public void Dispose() => GC.SuppressFinalize(this);
 
-        public async Task<List<Guid>> GetIdClientsByTopicId(Guid topicId)
-            => _dbSet.Where(x => x.TopicId == topicId).Select(x => x.ClientId).ToList();
+        public async Task<List<Client>> GetClientsByTopicId(Guid topicId)
+           => _dbSet
+            .Include(x => x.Client)
+                .ThenInclude(x => x.Messages)
+            .Where(x => x.TopicId == topicId && x.Client.IsOnline)
+            .Select(x => x.Client)
+            .ToList();
+        
     }
 }

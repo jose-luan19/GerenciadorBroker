@@ -11,7 +11,7 @@ import { ClientDetails } from '../interfaces/clientDetails';
 export class ClientService {
 
   constructor(private httpClient: HttpClient) { }
-  private url = environment.apiUrlHTTPS + "Client/";
+  private url = environment.apiUrlHTTP + "Client/";
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
   });

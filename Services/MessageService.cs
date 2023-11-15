@@ -39,35 +39,35 @@ namespace Services
         {
             var messageRecevied = JsonSerializer.Deserialize<CreateMessageViewModel>(json);
 
-            if (!_messageRepository.Any(x => x.SendMessageDate == messageRecevied.SendMessageDate))
+            if (messageRecevied.ClientId != null)
             {
-                if (messageRecevied.ClientId != null)
+                MessageRecevied newMessageRecevied = new()
                 {
-                    MessageRecevied newMessageRecevied = new()
-                    {
-                        Body = messageRecevied.Message,
-                        ClientId = (Guid)messageRecevied.ClientId,
-                        SendMessageDate = (DateTime)messageRecevied.SendMessageDate,
-                    };
-                    _messageRepository.Insert(newMessageRecevied);
-                }
-                else
+                    Body = messageRecevied.Message,
+                    ClientId = (Guid)messageRecevied.ClientId,
+                    SendMessageDate = (DateTime)messageRecevied.SendMessageDate,
+                };
+                _messageRepository.Insert(newMessageRecevied);
+            }
+            else
+            {
+                var lisIds = await _clientTopicRepository.GetClientsByTopicId((Guid)messageRecevied.TopicId);
+                foreach (var client in lisIds)
                 {
-                    var lisIds = await _clientTopicRepository.GetIdClientsByTopicId((Guid)messageRecevied.TopicId);
-                    foreach (var clientId in lisIds)
+                    if(!client.Messages.Any(x => x.SendMessageDate == messageRecevied.SendMessageDate))
                     {
                         _messageRepository.Insert(
                             new MessageRecevied
                             {
                                 Body = messageRecevied.Message,
-                                ClientId = clientId,
+                                ClientId = client.Id,
                                 SendMessageDate = (DateTime)messageRecevied.SendMessageDate
                             }
                         );
                     }
                 }
-                _messageRepository.Commit();
             }
+            _messageRepository.Commit();
         }
 
         public async Task PostMessage(CreateMessageViewModel createMessageViewModel)

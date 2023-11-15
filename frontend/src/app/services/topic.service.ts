@@ -11,7 +11,7 @@ import { Response } from '../interfaces/response';
 export class TopicService {
 
   constructor(private httpClient: HttpClient) { }
-  private url = environment.apiUrlHTTPS + "Topic/";
+  private url = environment.apiUrlHTTP + "Topic/";
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
   });

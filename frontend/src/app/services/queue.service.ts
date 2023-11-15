@@ -11,7 +11,7 @@ import { Response } from '../interfaces/response';
 export class QueueService {
 
   constructor(private httpClient: HttpClient) { }
-  private url = environment.apiUrlHTTPS + "Queue/";
+  private url = environment.apiUrlHTTP + "Queue/";
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
   });
