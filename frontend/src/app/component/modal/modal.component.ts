@@ -18,4 +18,7 @@ export class ModalComponent {
   shouldRoutingKey(): boolean {
     return this.data.routingKeyPlaceholder !== undefined;
   }
+  isFormValid(): boolean {
+    return !!this.data.name && (this.shouldRoutingKey() ? !!this.data.routingKey : true);
+  }
 }

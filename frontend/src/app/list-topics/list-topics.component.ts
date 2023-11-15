@@ -55,9 +55,7 @@ export class ListTopicsComponent implements OnInit{
       data: {
         title: title,
         parameterPlaceholder: placeholderName,
-        routingKeyPlaceholder: routingKey,
-        routingKey: 'NEW',
-        name: 'TOPIC'
+        routingKeyPlaceholder: routingKey
       },
     });
 
