@@ -12,6 +12,7 @@ namespace Services
         private readonly IClientRepository _clientRepository;
         private readonly ITopicRepository _topicRepository;
         private readonly IClientTopicRepository _clientTopicRepository;
+        private readonly IQueueRepository _queueRepository;
         private readonly IQueueService _queueService;
         private readonly ITopicService _topicService;
         private readonly IMapper _mapper;
@@ -20,6 +21,7 @@ namespace Services
             IClientRepository clientRepository,
             ITopicRepository topicRepository,
             IClientTopicRepository clientTopicRepository,
+            IQueueRepository queueRepository,
             IQueueService queueService,
             ITopicService topicService,
             IMapper mapper
@@ -28,6 +30,7 @@ namespace Services
             _clientRepository = clientRepository;
             _topicRepository = topicRepository;
             _clientTopicRepository = clientTopicRepository;
+            _queueRepository = queueRepository;
             _queueService = queueService;
             _topicService = topicService;
             _mapper = mapper;
@@ -39,13 +42,20 @@ namespace Services
             {
                 throw new AlreadyExistExpection("Client já existe");
             }
-            var queue = await _queueService.
-                CreateQueue(new CreateQueueViewModel() { Name = clientViewModel.Name + ".QUEUE" });
+
+            var queueName = clientViewModel.Name + ".QUEUE";
+            var verifyQueueExists = _queueRepository.Find(x => x.Name == queueName);
+
+            if(verifyQueueExists == null)
+            {
+                verifyQueueExists = await _queueService.
+                CreateQueue(new CreateQueueViewModel() { Name = queueName });
+            }
 
             Client newClient = new()
             {
                 Name = clientViewModel.Name,
-                QueueId = queue.Id,
+                QueueId =  verifyQueueExists.Id,
             };
             _clientRepository.Insert(newClient);
             _clientRepository.Commit();
@@ -61,7 +71,6 @@ namespace Services
             }
             _clientRepository.Delete(client);
             _clientRepository.Commit();
-            _queueService.DeleteQueueAfterClient(client.QueueId);
         }
 
         public async Task<List<ReadAllClientViewModel>> GetAllClient()
