@@ -17,13 +17,15 @@ namespace Services
         private readonly IClientTopicRepository _clientTopicRepository;
         private readonly ITopicRepository _topicRepository;
         private readonly IQueueService _queueService;
+        private readonly ConfigRabbitMQ _configRabbitMQ;
         public MessageService
         (
         IMessageReceviedRepository messageRepository, 
         IClientRepository clientRepository,
         IClientTopicRepository clientTopicRepository,
         ITopicRepository topicRepository,
-        IQueueService queueService
+        IQueueService queueService, 
+        ConfigRabbitMQ configRabbitMQ
         )
         {
             _messageRepository = messageRepository;
@@ -31,40 +33,41 @@ namespace Services
             _clientTopicRepository = clientTopicRepository;
             _topicRepository = topicRepository;
             _queueService = queueService;
+            _configRabbitMQ = configRabbitMQ;
         }
         public async Task SaveMessage(string json)
         {
             var messageRecevied = JsonSerializer.Deserialize<CreateMessageViewModel>(json);
 
-            if (!_messageRepository.Any(x => x.SendMessageDate == messageRecevied.SendMessageDate))
+            if (messageRecevied.ClientId != null)
             {
-                if (messageRecevied.ClientId != null)
+                MessageRecevied newMessageRecevied = new()
                 {
-                    MessageRecevied newMessageRecevied = new()
-                    {
-                        Body = messageRecevied.Message,
-                        ClientId = (Guid)messageRecevied.ClientId,
-                        SendMessageDate = (DateTime)messageRecevied.SendMessageDate,
-                    };
-                    _messageRepository.Insert(newMessageRecevied);
-                }
-                else
+                    Body = messageRecevied.Message,
+                    ClientId = (Guid)messageRecevied.ClientId,
+                    SendMessageDate = (DateTime)messageRecevied.SendMessageDate,
+                };
+                _messageRepository.Insert(newMessageRecevied);
+            }
+            else
+            {
+                var lisIds = await _clientTopicRepository.GetClientsByTopicId((Guid)messageRecevied.TopicId);
+                foreach (var client in lisIds)
                 {
-                    var lisIds = await _clientTopicRepository.GetIdClientsByTopicId((Guid)messageRecevied.TopicId);
-                    foreach (var clientId in lisIds)
+                    if(!client.Messages.Any(x => x.SendMessageDate == messageRecevied.SendMessageDate))
                     {
                         _messageRepository.Insert(
                             new MessageRecevied
                             {
                                 Body = messageRecevied.Message,
-                                ClientId = clientId,
+                                ClientId = client.Id,
                                 SendMessageDate = (DateTime)messageRecevied.SendMessageDate
                             }
                         );
                     }
                 }
-                _messageRepository.Commit();
             }
+            _messageRepository.Commit();
         }
 
         public async Task PostMessage(CreateMessageViewModel createMessageViewModel)
@@ -75,12 +78,12 @@ namespace Services
             if (createMessageViewModel.ClientId != null)
             {
                 var client = _clientRepository.GetById(createMessageViewModel.ClientId);
-                ConfigRabbitMQ.Channel
+                _configRabbitMQ.Channel
                     .BasicPublish(exchange: "", routingKey: client.Queue.Name, body: body);
                 return;
             }
             var topic = _topicRepository.GetById(createMessageViewModel.TopicId);
-            ConfigRabbitMQ.Channel
+            _configRabbitMQ.Channel
                 .BasicPublish
                 (
                     exchange: topic.Name, 
@@ -93,7 +96,7 @@ namespace Services
         {
             uint count = 0;
             var queues = await _queueService.GetAllQueues();
-            queues.ForEach(q => { count += ConfigRabbitMQ.Channel.MessageCount(q.Name); });
+            queues.ForEach(q => { count += _configRabbitMQ.Channel.MessageCount(q.Name); });
             return count;
         }
     }
