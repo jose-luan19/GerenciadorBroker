@@ -12,7 +12,7 @@
       <mat-dialog-actions _ngcontent-rsb-c12="" class="mat-mdc-dialog-actions mdc-dialog__actions">
         <div class="button-container">
           <button mat-button class="btn btn-danger" (click)="onNoClick()">Cancelar</button>
-          <button mat-button class="btn btn-success" [mat-dialog-close]="data" cdkFocusInitial>Enviar</button>
+          <button mat-button class="btn btn-success" [mat-dialog-close]="data" [disabled]="!isFormValid()" [attr.cdkFocusInitial]="isFormValid() ? true : null">Enviar</button>
         </div>
       </mat-dialog-actions>
 
