@@ -8,7 +8,6 @@ namespace Services.Interfaces
         Task DeleteClient(Guid id);
         Task<ReadDetailsClientViewModel> GetClient(Guid id);
         Task<List<ReadAllClientViewModel>> GetAllClient();
-        Task SubscribeTopic(SubscribeTopicViewModel subscribeTopicViewModel);
         Task ChangeStatus(Guid id);
     }
 }

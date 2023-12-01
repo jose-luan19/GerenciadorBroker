@@ -1,4 +1,3 @@
-import { Topic } from "./topic"
 
 export interface ClientDetails {
   id: string
@@ -7,7 +6,6 @@ export interface ClientDetails {
   queueName: string
   isOnline: boolean
   messages: MessageClient[]
-  topics: Topic[]
 }
 
 interface MessageClient {

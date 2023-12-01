@@ -10,29 +10,20 @@ namespace Services
     public class ClientService : IClientService
     {
         private readonly IClientRepository _clientRepository;
-        private readonly ITopicRepository _topicRepository;
-        private readonly IClientTopicRepository _clientTopicRepository;
         private readonly IQueueRepository _queueRepository;
         private readonly IQueueService _queueService;
-        private readonly ITopicService _topicService;
         private readonly IMapper _mapper;
         public ClientService
             (
             IClientRepository clientRepository,
-            ITopicRepository topicRepository,
-            IClientTopicRepository clientTopicRepository,
             IQueueRepository queueRepository,
             IQueueService queueService,
-            ITopicService topicService,
             IMapper mapper
             )
         {
             _clientRepository = clientRepository;
-            _topicRepository = topicRepository;
-            _clientTopicRepository = clientTopicRepository;
             _queueRepository = queueRepository;
             _queueService = queueService;
-            _topicService = topicService;
             _mapper = mapper;
         }
 
@@ -85,31 +76,7 @@ namespace Services
             return _mapper.Map<ReadDetailsClientViewModel>(clientDetails);
         }
 
-        public async Task SubscribeTopic(SubscribeTopicViewModel subscribeTopicViewModel)
-        {
-            var client = _clientRepository.GetById(subscribeTopicViewModel.ClientId);
-            var topic = _topicRepository.GetById(subscribeTopicViewModel.TopicId);
 
-            if (client == null || topic == null)
-            {
-                throw new NotFoundException("Cliente ou Topico não existe");
-            }
-            List<CreateQueueViewModel> createQueueViewModels = new List<CreateQueueViewModel>()
-            {
-                new()
-                {
-                    Name = client.Queue.Name
-                }
-            };
-            await _topicService.TopicBindQueues(createQueueViewModels, topic);
-            ClientTopic newClientTopic = new()
-            {
-                ClientId = subscribeTopicViewModel.ClientId,
-                TopicId = subscribeTopicViewModel.TopicId
-            };
-            _clientTopicRepository.Insert(newClientTopic);
-            _clientTopicRepository.Commit();
-        }
         public async Task ChangeStatus(Guid id)
         {
             var client = _clientRepository.GetById(id);

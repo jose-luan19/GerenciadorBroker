@@ -6,8 +6,6 @@ import { ClientService } from '../services/client.service';
 import { ClientDetails } from '../interfaces/clientDetails';
 import { format } from 'date-fns';
 import { Client } from '../interfaces/client';
-import { TopicService } from '../services/topic.service';
-import { Topic } from '../interfaces/topic';
 import { ModalComponent } from '../component/modal/modal.component';
 import { MessageService } from '../services/message.service';
 
@@ -21,7 +19,6 @@ export class ClientDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private clientService: ClientService,
-    private topicService: TopicService,
     private messageService: MessageService,
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
@@ -29,24 +26,35 @@ export class ClientDetailsComponent implements OnInit {
     )
     {}
 
-  private currentId!: string;
-  public currentClient!: ClientDetails;
-  public listClients!: Client[];
-  public listTopics!: Topic[];
+    private currentId!: string;
+    public currentClient!: ClientDetails;
+    public listClients!: Client[];
 
-  getDetails(id: string){
-    this.clientService.getDetailsClient(id).subscribe((client: ClientDetails)=>{
-      this.currentClient = client
-      this.currentClient.messages = this.currentClient.messages.sort((a, b) => {
-        const dateA = new Date(a.createDate);
-        const dateB = new Date(b.createDate);
-        return dateA.getTime() - dateB.getTime();
+    ngOnInit(): void {
+      this.route.params.subscribe(params => {
+        this.currentId = params['id'];
+        this.getDetails(this.currentId);
       });
-      this.formatarData();
-      this.getOtherClients();
-      this.getTopics();
+    }
+
+    getDetails(id: string, onlyMessages: boolean = false){
+      this.clientService.getDetailsClient(id).subscribe((client: ClientDetails)=>{
+        this.currentClient = client;
+        this.getMessages();
+        if(!onlyMessages){
+          this.getOtherClients();
+        }
       this.cdr.detectChanges();
     });
+  }
+  getMessages(){
+    this.currentClient.messages = this.currentClient.messages.sort((a, b) => {
+      const dateA = new Date(a.createDate);
+      const dateB = new Date(b.createDate);
+      return dateA.getTime() - dateB.getTime();
+    });
+    this.formatarData();
+    this.cdr.detectChanges();
   }
   getOtherClients(){
     this.clientService.getAll().subscribe((clients: Client[])=>{
@@ -58,26 +66,6 @@ export class ClientDetailsComponent implements OnInit {
     });
   }
 
-  getTopics(){
-    this.topicService.getAll().subscribe((topics: Topic[])=>{
-      this.listTopics = topics.sort((a, b) => {
-        const dateA = new Date(a.createDate);
-        const dateB = new Date(b.createDate);
-        return dateA.getTime() - dateB.getTime();
-      });;
-    });
-  }
-
-  topicsSubscribe(id: string): boolean{
-    var exist = this.currentClient.topics.some(item => item.id === id);
-    return exist;
-  }
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.currentId = params['id'];
-      this.getDetails(this.currentId);
-    });
-  }
   formatarData() {
     this.currentClient.messages.forEach(element => {
       const dataObj = new Date(element.sendMessageDate);
@@ -165,8 +153,9 @@ export class ClientDetailsComponent implements OnInit {
 
   changeStatusClient(){
     this.clientService.changeStatus(this.currentId).subscribe(()=>{
-      this.getDetails(this.currentId);
+      this.currentClient.isOnline = !this.currentClient.isOnline;
       this.openSnackBar(`Cliente \' ${this.currentClient.name} \' mudou de STATUS`, 'Fechar', true);
+      setTimeout(()=>{this.getDetails(this.currentId, true)}, 3000);
     });
   }
 

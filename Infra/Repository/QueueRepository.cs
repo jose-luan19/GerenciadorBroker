@@ -13,8 +13,6 @@ namespace Infra.Repository
         {
            return _dbSet
                 .Include(q => q.Client)
-                .Include(q => q.QueueTopics)
-                    .ThenInclude(qt => qt.Topic)
                 .ToList(); ;
         }
 

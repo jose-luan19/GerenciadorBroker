@@ -13,9 +13,5 @@ export class MessageService {
   sendMessage(obj: Object){
     return this.httpClient.post(this.url,obj)
   }
-  getCountMessagesInRabbitMQ(){
-    return this.httpClient.get<number>(this.url);
-  }
-
 
 }

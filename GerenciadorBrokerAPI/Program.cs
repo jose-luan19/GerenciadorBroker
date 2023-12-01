@@ -18,15 +18,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
-builder.Services.AddScoped<IClientTopicRepository, ClientTopicRepository>();
-builder.Services.AddScoped<IQueueTopicRepository, QueueTopicRepository>();
 
 builder.Services.AddScoped<IMessageReceviedRepository, MessageReceviedRepository>();
-builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 
 builder.Services.AddScoped<IQueueService, QueueService>();
-builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 

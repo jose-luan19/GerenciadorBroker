@@ -21,7 +21,8 @@
     <header class="text-center mt-5">
       <div class="row justify-content-center align-items-center">
         <div *ngIf="currentClient" class="col-auto">
-          <h3 class="display-7">OUTROS CLIENTES</h3>
+          <h3 class="display-7">CONTATOS</h3>
+          <!-- <button type="button"></button> adicionar novo contato-->
         </div>
       </div>
     </header>
@@ -29,59 +30,30 @@
     <table class="table container-xl" style="margin-bottom: 75px;">
       <thead>
         <tr>
-          <th scope="col">Nome</th>
-          <th class="image">Ação</th>
+          <th>#</th>
+          <th class="space-rows" scope="col">Nome</th>
+          <th class="space-rows-action">Ação</th>
         </tr>
       </thead>
       <tbody *ngIf="currentClient" class="table-group-divider">
         <tr *ngFor="let item of listClients; let i=index;">
-          <td>{{ item.name }}</td>
-          <td id="clients-button">
-            <button type="button" class="btn btn-second" (click)="openModalMessageForClient(item.id, item.name)">
-              <i class="bi bi-send"></i> ENVIAR MENSAGEM
+          <td>{{ i+1 }}</td>
+          <td class="space-rows">{{ item.name }}</td>
+          <td class="space-rows">
+            <button type="button" class="btn btn-primary" (click)="openModalMessageForClient(item.id, item.name)">
+              <i class="bi bi-send"></i>
+            </button>
+            <button type="button" class="btn btn-danger" id="button-delete-contact">
+              <i class="bi bi-trash"></i>
             </button>
           </td>
-          <!-- (click)="navigateToDetails( item.id )" -->
         </tr>
 
 
       </tbody>
     </table>
   </div>
-  <div class="space-table">
-    <header class="text-center mt-5">
-      <div class="row justify-content-center align-items-center">
-        <div *ngIf="currentClient" class="col-auto">
-          <h3 class="display-7">TÓPICOS</h3>
-        </div>
-      </div>
-    </header>
-
-    <table class="table container-xl" style="margin-bottom: 75px;">
-      <thead>
-        <tr>
-          <th scope="col">Nome</th>
-          <th scope="col">Rota</th>
-          <th class="image">Ação</th>
-        </tr>
-      </thead>
-      <tbody *ngIf="listTopics" class="table-group-divider">
-        <tr *ngFor="let item of listTopics; let i=index;">
-          <td>{{ item.name }}</td>
-          <td>{{ item.routingKey }}</td>
-          <td id="topics-button">
-            <button *ngIf="!topicsSubscribe(item.id)" type="button" class="btn btn-primary" (click)="subscribeInTopic(item.id, item.name)">
-              <i class="bi bi-info-circle"></i> ASSINAR
-            </button>
-            <button type="button" class="btn btn-second" id="send-message" (click)="openModalMessageForTopic(item.id, item.name)">
-              <i class="bi bi-send"></i> ENVIAR MENSAGEM
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
-</div>
 
 <header class="text-center mt-5">
   <div class="row justify-content-center align-items-center">

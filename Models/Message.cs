@@ -1,6 +1,6 @@
 ﻿namespace Models
 {
-    public class MessageRecevied : BaseEntity
+    public class Message : BaseEntity
     {
         public string Body { get; set; }
         public Guid ClientId { get; set; }

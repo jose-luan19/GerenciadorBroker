@@ -2,7 +2,7 @@
 
 namespace Infra.Repository.Interfaces
 {
-    public interface IMessageReceviedRepository : IDisposable, IARepository<MessageRecevied>
+    public interface IMessageReceviedRepository : IDisposable, IARepository<Message>
     {
     }
 }

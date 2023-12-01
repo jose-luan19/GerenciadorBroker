@@ -5,32 +5,16 @@ tr{
 th{
   text-align: center;
 }
-.topics-list {
-  padding: 0; /* Remover o preenchimento padrão da lista */
-  list-style-type: none; /* Remover os pontos padrão da lista */
-}
 
-.topics-list-item {
-  margin-left: 8px; /* Ajustar a margem à esquerda para compensar o ponto */
-}
-#buttonCreate{
-  margin-left: 40rem;
-}
+
 .space-table{
   margin-right: 5rem!important;
   margin-left: 5rem!important;
 }
 
-#send-message{
-  margin-left: 18px;
-}
-#topics-button{
-  padding-right: 3rem;
-  padding-left: 7rem;
-}
-#clients-button{
-  padding-right: 7rem;
-  padding-left: 7rem;
+.space-rows{
+  padding-right: 2rem;
+  padding-left: 5rem;
 }
 
 .div-button-on{
@@ -40,4 +24,12 @@ th{
 
 #button-on{
   margin-left: 25px
+}
+
+#button-delete-contact{
+  margin-left: 14px;
+}
+.space-rows-action{
+  padding-right: 2.3rem;
+  padding-left: 5rem;
 }

@@ -62,10 +62,5 @@ namespace Services
             _repository.Delete(queue);
             _repository.Commit();
         }
-
-        public async Task<List<ReadAllQueueViewModel>> GetAllQueues()
-        {
-            return _mapper.Map<List<ReadAllQueueViewModel>>(await _repository.GetAllInclude());
-        }
     }
 }
