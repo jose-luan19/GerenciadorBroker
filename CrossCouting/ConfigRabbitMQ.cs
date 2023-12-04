@@ -16,7 +16,7 @@ namespace CrossCouting
 
         private ConnectionFactory factory;
         private IConnection connection;
-        public IModel Channel { get; private set; } 
+        public IModel Channel { get; private set; }
 
         private void configure()
         {

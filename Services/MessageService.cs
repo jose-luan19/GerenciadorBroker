@@ -11,14 +11,13 @@ namespace Services
 {
     public class MessageService : IMessageService
     {
-        private readonly IMessageReceviedRepository _messageRepository;
+        private readonly IMessageRepository _messageRepository;
         private readonly IClientRepository _clientRepository;
         private readonly ConfigRabbitMQ _configRabbitMQ;
         public MessageService
         (
-        IMessageReceviedRepository messageRepository, 
+        IMessageRepository messageRepository,
         IClientRepository clientRepository,
-        IQueueService queueService, 
         ConfigRabbitMQ configRabbitMQ
         )
         {
@@ -33,11 +32,11 @@ namespace Services
             Message newMessageRecevied = new()
             {
                 Body = messageRecevied.Message,
-                ClientId = (Guid)messageRecevied.ClientId,
+                ClientReceviedId = (Guid)messageRecevied.ClientId,
                 SendMessageDate = (DateTime)messageRecevied.SendMessageDate,
             };
             _messageRepository.Insert(newMessageRecevied);
-            
+
             _messageRepository.Commit();
         }
 
@@ -49,7 +48,7 @@ namespace Services
             var client = _clientRepository.GetById(createMessageViewModel.ClientId);
             _configRabbitMQ.Channel
                 .BasicPublish(exchange: "", routingKey: client.Queue.Name, body: body);
-           
+
         }
     }
 }

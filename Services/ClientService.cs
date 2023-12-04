@@ -37,7 +37,7 @@ namespace Services
             var queueName = clientViewModel.Name + ".QUEUE";
             var verifyQueueExists = _queueRepository.Find(x => x.Name == queueName);
 
-            if(verifyQueueExists == null)
+            if (verifyQueueExists == null)
             {
                 verifyQueueExists = await _queueService.
                 CreateQueue(new CreateQueueViewModel() { Name = queueName });
@@ -46,7 +46,7 @@ namespace Services
             Client newClient = new()
             {
                 Name = clientViewModel.Name,
-                QueueId =  verifyQueueExists.Id,
+                QueueId = verifyQueueExists.Id,
             };
             _clientRepository.Insert(newClient);
             _clientRepository.Commit();
@@ -60,8 +60,7 @@ namespace Services
             {
                 throw new NotFoundException("O Client não foi encontrado.");
             }
-            _clientRepository.Delete(client);
-            _clientRepository.Commit();
+            await _queueService.DeleteQueue(client.Queue);
         }
 
         public async Task<List<ReadAllClientViewModel>> GetAllClient()

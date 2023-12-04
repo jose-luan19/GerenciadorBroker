@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CrossCouting;
+﻿using CrossCouting;
 using Infra.Repository.Interfaces;
 using Models;
 using Models.ViewModel;
@@ -11,13 +10,11 @@ namespace Services
     public class QueueService : IQueueService
     {
         private readonly IQueueRepository _repository;
-        private readonly IMapper _mapper;
         private readonly ConfigRabbitMQ _configRabbitMQ;
 
-        public QueueService(IQueueRepository repository, IMapper mapper, ConfigRabbitMQ configRabbitMQ)
+        public QueueService(IQueueRepository repository, ConfigRabbitMQ configRabbitMQ)
         {
             _repository = repository;
-            _mapper = mapper;
             _configRabbitMQ = configRabbitMQ;
         }
 
@@ -37,27 +34,8 @@ namespace Services
             return newQueue;
         }
 
-        public async Task DeleteQueue(Guid idQueue)
+        public async Task DeleteQueue(Queues queue)
         {
-
-            Queues queue = await _repository.GetByIdIncludeClient(idQueue);
-
-            if (queue == null)
-            {
-                throw new NotFoundException("A fila não foi encontrada.");
-            }
-            if(queue.Client != null) 
-            {
-                throw new DeleteException("Fila não pode ser excluida pois já pertence a um cliente");
-            }
-            _configRabbitMQ.Channel.QueueDelete(queue: queue.Name);
-            _repository.Delete(queue);
-            _repository.Commit();
-        }
-
-        public async Task DeleteQueueAfterClient(Guid idQueue)
-        {
-            Queues queue = await _repository.GetByIdIncludeClient(idQueue);
             _configRabbitMQ.Channel.QueueDelete(queue: queue.Name);
             _repository.Delete(queue);
             _repository.Commit();

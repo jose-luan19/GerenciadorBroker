@@ -11,14 +11,14 @@ namespace Infra.Repository
         }
         public async Task<List<Queues>> GetAllInclude()
         {
-           return _dbSet
-                .Include(q => q.Client)
-                .ToList(); ;
+            return _dbSet
+                 .Include(q => q.Client)
+                 .ToList(); ;
         }
 
         public async Task<Queues> GetByIdIncludeClient(Guid id)
         {
-           return _dbSet.Include(x => x.Client).First(x => x.Id == id);
+            return _dbSet.Include(x => x.Client).First(x => x.Id == id);
         }
         public void Dispose() => GC.SuppressFinalize(this);
     }

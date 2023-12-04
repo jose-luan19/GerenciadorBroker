@@ -48,7 +48,7 @@ namespace GerenciadorBrokerAPI.Controllers
             {
                 await _clientService.DeleteClient(id);
             }
-            catch (NotFoundException ex)
+            catch (Exception ex)
             {
                 return NotFound(ex.Message);
             }

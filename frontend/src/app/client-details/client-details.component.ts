@@ -103,45 +103,7 @@ export class ClientDetailsComponent implements OnInit {
     });
   }
 
-  openModalMessageForTopic(idTopic: string, nameTopic: string){
-    const dialogRef = this.dialog.open(ModalComponent, {
-      width: '300px',
-      data: {
-        title: 'MENSAGEM PARA TÓPICO \'' + nameTopic + '\'',
-        parameterPlaceholder: 'Mensagem',
-      },
-    });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        const obj: Object = {
-          topicId: idTopic,
-          message: result.name
-        }
-        this.messageService.sendMessage(obj).subscribe(
-          () => {
-            this.getDetails(this.currentId);
-            this.openSnackBar(`Mensagem enviada para tópico \' ${nameTopic} \'`, 'Fechar', true);
-          },
-          (error) => {
-            if(error.status === 400){
-              this.openSnackBar(error.error, 'Fechar');
-            }
-          }
-        );
-      }
-    });
-  }
-  subscribeInTopic(idTopic: string, nameTopic: string){
-    const subscribe: Object ={
-      topicId: idTopic,
-      clientId: this.currentId
-    }
-    this.clientService.subscribe(subscribe).subscribe(() => {
-      this.getDetails(this.currentId);
-      this.openSnackBar(`Tópico \' ${nameTopic} \' assinadoo`, 'Fechar', true);
-    });
-  }
   openSnackBar(message: string, action: string, sucess: boolean = false) {
     this.snackBar.open(message, action, {
         duration: 6000,

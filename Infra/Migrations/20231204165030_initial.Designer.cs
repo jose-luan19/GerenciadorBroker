@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Migrations
 {
     [DbContext(typeof(DbContextClass))]
-    [Migration("20231130235454_initial")]
+    [Migration("20231204165030_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -46,7 +46,31 @@ namespace Infra.Migrations
                     b.HasIndex("QueueId")
                         .IsUnique();
 
-                    b.ToTable("Client");
+                    b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Models.Contact", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ClientContactId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientContactId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("Contacts");
                 });
 
             modelBuilder.Entity("Models.Message", b =>
@@ -59,7 +83,10 @@ namespace Infra.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("ClientId")
+                    b.Property<Guid>("ClientReceviedId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ClientSendId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreateDate")
@@ -70,7 +97,9 @@ namespace Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("ClientReceviedId");
+
+                    b.HasIndex("ClientSendId");
 
                     b.ToTable("Messages");
                 });
@@ -104,20 +133,49 @@ namespace Infra.Migrations
                     b.Navigation("Queue");
                 });
 
-            modelBuilder.Entity("Models.Message", b =>
+            modelBuilder.Entity("Models.Contact", b =>
                 {
+                    b.HasOne("Models.Client", "ClientContact")
+                        .WithMany()
+                        .HasForeignKey("ClientContactId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Models.Client", "Client")
-                        .WithMany("Messages")
+                        .WithMany("Contacts")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
+
+                    b.Navigation("ClientContact");
+                });
+
+            modelBuilder.Entity("Models.Message", b =>
+                {
+                    b.HasOne("Models.Client", "ClientRecevied")
+                        .WithMany("MessagesRecevied")
+                        .HasForeignKey("ClientReceviedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Client", "ClientSend")
+                        .WithMany()
+                        .HasForeignKey("ClientSendId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ClientRecevied");
+
+                    b.Navigation("ClientSend");
                 });
 
             modelBuilder.Entity("Models.Client", b =>
                 {
-                    b.Navigation("Messages");
+                    b.Navigation("Contacts");
+
+                    b.Navigation("MessagesRecevied");
                 });
 
             modelBuilder.Entity("Models.Queues", b =>

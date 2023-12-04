@@ -27,7 +27,7 @@ namespace Infra.Repository
         public async Task<Client> GetDetailsById(Guid id)
         {
             return _dbSet
-                .Include(x => x.Messages)
+                .Include(x => x.MessagesRecevied)
                 .Include(x => x.Queue)
                 .First(x => x.Id == id);
         }
