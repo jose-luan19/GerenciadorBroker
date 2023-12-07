@@ -7,5 +7,6 @@
         public string QueueName { get; set; }
         public bool IsOnline { get; set; }
         public ICollection<ReadMessageViewModel> Messages { get; set; }
+        public ICollection<ReadAllClientViewModel> Contacts { get; set; }
     }
 }

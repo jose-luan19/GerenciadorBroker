@@ -1,5 +1,6 @@
 import { Component, Inject} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-modal',
@@ -15,10 +16,13 @@ export class ModalComponent {
   onNoClick(): void {
     this.dialogRef.close();
   }
-  shouldRoutingKey(): boolean {
-    return this.data.routingKeyPlaceholder !== undefined;
+  shouldContacts(): boolean {
+    return this.data.namePlaceholder === undefined && !!this.data.listContacts ? this.shouldLenghtListContacts() : false;
+  }
+  shouldLenghtListContacts(): boolean {
+    return this.data.listContacts.length === 0;
   }
   isFormValid(): boolean {
-    return !!this.data.name && (this.shouldRoutingKey() ? !!this.data.routingKey : true);
+    return !!this.data.name || !!this.data.client ;
   }
 }

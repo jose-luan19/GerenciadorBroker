@@ -7,6 +7,6 @@
         public virtual Client ClientRecevied { get; set; }
         public Guid ClientSendId { get; set; }
         public virtual Client ClientSend { get; set; }
-        public DateTime SendMessageDate { get; set; }
+        public DateTime? SendMessageDate { get; set; }
     }
 }

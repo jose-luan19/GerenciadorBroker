@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Client } from '../interfaces/client';
 import { Response } from '../interfaces/response';
 import { ClientDetails } from '../interfaces/clientDetails';
+import { Contact } from '../interfaces/contact';
 
 @Injectable({
   providedIn: 'root'
@@ -35,5 +36,14 @@ export class ClientService {
   }
   changeStatus(id: string){
     return this.httpClient.put(this.url+ id, {});
+  }
+  getAllContactsPossible(id: string){
+    return this.httpClient.get<Client[]>(this.url + "OthersContacts/" + id);
+  }
+  addContact(contact: Contact){
+    return this.httpClient.post(this.url + "AddContact/", contact);
+  }
+  removeContact(contact: Contact){
+    return this.httpClient.delete(this.url + "RemoveContact/", {body: contact});
   }
 }

@@ -28,8 +28,24 @@ namespace Infra.Repository
         {
             return _dbSet
                 .Include(x => x.MessagesRecevied)
+                    .ThenInclude(x => x.ClientSend)
                 .Include(x => x.Queue)
-                .First(x => x.Id == id);
+                .Include(x => x.Contacts)
+                    .ThenInclude(x => x.ClientContact)
+                .SingleOrDefault(x => x.Id == id);
+        }
+
+        public async Task<List<Client>> GetPossiblesContacts(Guid id)
+        {
+            var clientePrincipal = _dbSet
+             .Include(c => c.Contacts) 
+             .SingleOrDefault(c => c.Id == id);
+
+            var idsContatosAtuais = clientePrincipal.Contacts.Select(c => c.ClientContactId);
+
+            return _dbSet
+                .Where(c => c.Id != id && !idsContatosAtuais.Contains(c.Id))
+                .ToList();
         }
     }
 }

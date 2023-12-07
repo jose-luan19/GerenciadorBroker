@@ -11,18 +11,21 @@ namespace Services
     {
         private readonly IClientRepository _clientRepository;
         private readonly IQueueRepository _queueRepository;
+        private readonly IContactRepository _contactRepository;
         private readonly IQueueService _queueService;
         private readonly IMapper _mapper;
         public ClientService
             (
             IClientRepository clientRepository,
             IQueueRepository queueRepository,
+            IContactRepository contactRepository,
             IQueueService queueService,
             IMapper mapper
             )
         {
             _clientRepository = clientRepository;
             _queueRepository = queueRepository;
+            _contactRepository = contactRepository;
             _queueService = queueService;
             _mapper = mapper;
         }
@@ -84,5 +87,27 @@ namespace Services
             _clientRepository.Commit();
         }
 
+        public async Task<List<ReadAllClientViewModel>> GetPossiblesContactsOfClient(Guid id)
+        {
+            var possiblesContacts = await _clientRepository.GetPossiblesContacts(id);
+            return _mapper.Map<List<ReadAllClientViewModel>>(possiblesContacts);
+        } 
+
+        public async Task AddContact(ContactViewModel bindViewModel)
+        {
+            Contact contact = new()
+            {
+                ClientId = bindViewModel.ClientId,
+                ClientContactId = bindViewModel.ContactId
+            };
+            _contactRepository.Insert(contact);
+            _contactRepository.Commit();
+        }
+        public async Task RemoveContact(ContactViewModel bindViewModel)
+        {
+            var contact = _contactRepository.Find(x => (x.ClientId == bindViewModel.ClientId && x.ClientContactId == bindViewModel.ContactId));
+            _contactRepository.Delete(contact);
+            _contactRepository.Commit();
+        }
     }
 }

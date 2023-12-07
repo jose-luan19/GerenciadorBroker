@@ -1,19 +1,25 @@
 <div class="modal-background"></div>
     <div class="modal-container">
-      <h2 id="title" mat-dialog-title>{{ data.title }}</h2>
+      <h2 *ngIf="shouldContacts(); else elseBlock" id="title" mat-dialog-title>NÃO HÁ MAIS CONTATOS PARA ADICIONAR</h2>
+      <ng-template #elseBlock>
+        <h2 id="title" mat-dialog-title>{{ data.title }}</h2>
       <mat-dialog-content>
-        <mat-form-field>
-          <input matInput [(ngModel)]="data.name" [placeholder]="data.parameterPlaceholder">
+        <mat-form-field *ngIf="data.namePlaceholder">
+          <input matInput [(ngModel)]="data.name" [placeholder]="data.namePlaceholder">
         </mat-form-field>
-        <!-- <mat-form-field *ngIf="shouldRoutingKey()">
-          <input matInput [(ngModel)]="data.routingKey" [placeholder]="data.routingKeyPlaceholder">
-        </mat-form-field> -->
+        <mat-form-field *ngIf="data.listContactsPlaceholder">
+          <mat-select [(ngModel)]="data.client" [placeholder]="data.listContactsPlaceholder">
+            <mat-option *ngFor="let client of data.listContacts" [value]="client">
+              {{ client.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </mat-dialog-content>
-      <mat-dialog-actions _ngcontent-rsb-c12="" class="mat-mdc-dialog-actions mdc-dialog__actions">
-        <div class="button-container">
-          <button mat-button class="btn btn-danger" (click)="onNoClick()">Cancelar</button>
-          <button mat-button class="btn btn-success" [mat-dialog-close]="data" [disabled]="!isFormValid()" [attr.cdkFocusInitial]="isFormValid() ? true : null">Enviar</button>
-        </div>
-      </mat-dialog-actions>
-
+        <mat-dialog-actions _ngcontent-rsb-c12="" class="mat-mdc-dialog-actions mdc-dialog__actions">
+          <div class="button-container">
+            <button mat-button class="btn btn-danger" (click)="onNoClick()">Cancelar</button>
+            <button mat-button class="btn btn-success" [mat-dialog-close]="data" [disabled]="!isFormValid()" [attr.cdkFocusInitial]="isFormValid() ? true : null">Enviar</button>
+          </div>
+        </mat-dialog-actions>
+      </ng-template>
     </div>

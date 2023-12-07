@@ -1,3 +1,4 @@
+import { Client } from "./client"
 
 export interface ClientDetails {
   id: string
@@ -6,6 +7,7 @@ export interface ClientDetails {
   queueName: string
   isOnline: boolean
   messages: MessageClient[]
+  contacts: Client[]
 }
 
 interface MessageClient {
@@ -13,4 +15,5 @@ interface MessageClient {
   createDate: string
   sendMessageDate: string
   sendMessageDateFormat: string
+  clientSend: Client
 }

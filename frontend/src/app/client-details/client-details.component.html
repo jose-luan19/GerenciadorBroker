@@ -20,9 +20,11 @@
   <div class="space-table">
     <header class="text-center mt-5">
       <div class="row justify-content-center align-items-center">
-        <div *ngIf="currentClient" class="col-auto">
-          <h3 class="display-7">CONTATOS</h3>
-          <!-- <button type="button"></button> adicionar novo contato-->
+        <div *ngIf="currentClient" class="col-auto d-flex align-items-center">
+          <h3 class="display-7" >CONTATOS</h3>
+          <button mat-raised-button id="buttonAddContact" class="btn btn-success" (click)="openModalAddContact()">
+            <i class="bi bi-plus"></i> Contatos
+          </button>
         </div>
       </div>
     </header>
@@ -36,14 +38,14 @@
         </tr>
       </thead>
       <tbody *ngIf="currentClient" class="table-group-divider">
-        <tr *ngFor="let item of listClients; let i=index;">
+        <tr *ngFor="let item of currentClient.contacts; let i=index;">
           <td>{{ i+1 }}</td>
           <td class="space-rows">{{ item.name }}</td>
           <td class="space-rows">
-            <button type="button" class="btn btn-primary" (click)="openModalMessageForClient(item.id, item.name)">
+            <button type="button" class="btn btn-primary" (click)="openModalMessageForClient(item)">
               <i class="bi bi-send"></i>
             </button>
-            <button type="button" class="btn btn-danger" id="button-delete-contact">
+            <button type="button" class="btn btn-danger" id="button-delete-contact" (click)="removeContact(item)">
               <i class="bi bi-trash"></i>
             </button>
           </td>
@@ -69,6 +71,7 @@
       <th>#</th>
       <th scope="col">Message</th>
       <th>Data de envio</th>
+      <th>Enviado por</th>
     </tr>
   </thead>
   <tbody *ngIf="currentClient" class="table-group-divider">
@@ -76,6 +79,7 @@
       <td>{{ i+1 }}</td>
       <td>{{ item.body }}</td>
       <td>{{ item.sendMessageDateFormat }}</td>
+      <td>{{ item.clientSend.name }}</td>
     </tr>
   </tbody>
 </table>

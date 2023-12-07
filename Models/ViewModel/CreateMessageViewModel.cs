@@ -1,13 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Models.ViewModel
+﻿namespace Models.ViewModel
 {
     public class CreateMessageViewModel
     {
-        public Guid? ClientId { get; set; }
-        [NotNull]
+        public Guid ClientSendId { get; set; }
+        public Guid ClientReceviedId { get; set; }
         public string Message { get; set; }
-        public Guid? TopicId { get; set; }
         public DateTime? SendMessageDate { get; set; }
     }
 }

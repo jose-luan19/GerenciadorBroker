@@ -32,8 +32,9 @@ namespace Services
             Message newMessageRecevied = new()
             {
                 Body = messageRecevied.Message,
-                ClientReceviedId = (Guid)messageRecevied.ClientId,
-                SendMessageDate = (DateTime)messageRecevied.SendMessageDate,
+                ClientReceviedId = messageRecevied.ClientReceviedId,
+                ClientSendId = messageRecevied.ClientSendId,
+                SendMessageDate = messageRecevied.SendMessageDate,
             };
             _messageRepository.Insert(newMessageRecevied);
 
@@ -45,7 +46,7 @@ namespace Services
             createMessageViewModel.SendMessageDate = DateTime.Now;
             var json = JsonSerializer.Serialize(createMessageViewModel);
             var body = Encoding.UTF8.GetBytes(json);
-            var client = _clientRepository.GetById(createMessageViewModel.ClientId);
+            var client = _clientRepository.GetById(createMessageViewModel.ClientReceviedId);
             _configRabbitMQ.Channel
                 .BasicPublish(exchange: "", routingKey: client.Queue.Name, body: body);
 

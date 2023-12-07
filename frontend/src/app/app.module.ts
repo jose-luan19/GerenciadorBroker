@@ -17,6 +17,7 @@ import { ListClientsComponent } from './list-clients/list-clients.component';
 import { ClientService } from './services/client.service';
 import { ClientDetailsComponent } from './client-details/client-details.component';
 import { MessageService } from './services/message.service';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { MessageService } from './services/message.service';
     HttpClientModule,
     MatDialogModule,
     MatFormFieldModule,
+    MatSelectModule,
     MatInputModule,
     BrowserAnimationsModule,
     MatSnackBarModule

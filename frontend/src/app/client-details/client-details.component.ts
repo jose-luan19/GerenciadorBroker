@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import { Client } from '../interfaces/client';
 import { ModalComponent } from '../component/modal/modal.component';
 import { MessageService } from '../services/message.service';
+import { Contact } from '../interfaces/contact';
 
 @Component({
   selector: 'app-client-details',
@@ -23,30 +24,32 @@ export class ClientDetailsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    )
-    {}
+  )
+  {}
 
-    private currentId!: string;
-    public currentClient!: ClientDetails;
-    public listClients!: Client[];
+  private currentId!: string;
+  public currentClient!: ClientDetails;
+  public listPossiblesClients!: Client[];
 
-    ngOnInit(): void {
-      this.route.params.subscribe(params => {
-        this.currentId = params['id'];
-        this.getDetails(this.currentId);
-      });
-    }
+  getData(){
+    this.getDetails();
+    this.getOtherClients();
+  }
 
-    getDetails(id: string, onlyMessages: boolean = false){
-      this.clientService.getDetailsClient(id).subscribe((client: ClientDetails)=>{
-        this.currentClient = client;
-        this.getMessages();
-        if(!onlyMessages){
-          this.getOtherClients();
-        }
-      this.cdr.detectChanges();
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.currentId = params['id'];
+      this.getData();
     });
   }
+
+  getDetails(){
+    this.clientService.getDetailsClient(this.currentId).subscribe((client: ClientDetails)=>{
+      this.currentClient = client;
+      this.getMessages();
+      this.cdr.detectChanges();
+  });
+}
   getMessages(){
     this.currentClient.messages = this.currentClient.messages.sort((a, b) => {
       const dateA = new Date(a.createDate);
@@ -54,15 +57,11 @@ export class ClientDetailsComponent implements OnInit {
       return dateA.getTime() - dateB.getTime();
     });
     this.formatarData();
-    this.cdr.detectChanges();
   }
+
   getOtherClients(){
-    this.clientService.getAll().subscribe((clients: Client[])=>{
-      this.listClients = clients.filter(item => item.id !== this.currentClient.id).sort((a, b) => {
-        const dateA = new Date(a.createDate);
-        const dateB = new Date(b.createDate);
-        return dateA.getTime() - dateB.getTime();
-      });
+    this.clientService.getAllContactsPossible(this.currentId).subscribe((clients: Client[])=>{
+      this.listPossiblesClients = clients;
     });
   }
 
@@ -73,25 +72,66 @@ export class ClientDetailsComponent implements OnInit {
     });
   }
 
-  openModalMessageForClient(idClient: string, nameClient: string){
+  removeContact(contact: Client){
+    const contactRemove: Contact = {
+      clientId: this.currentId,
+      contactId: contact.id
+    }
+    this.clientService.removeContact(contactRemove).subscribe(()=>{
+      this.getData();
+      this.openSnackBar(`Contato \' ${contact.name} \' removido da lista`, 'Fechar');
+    });
+  }
+
+  openModalAddContact(){
     const dialogRef = this.dialog.open(ModalComponent, {
       width: '300px',
       data: {
-        title: 'MENSAGEM PARA \'' + nameClient +'\'',
-        parameterPlaceholder: 'Mensagem',
+        title: 'Selecionar Contato',
+        listContactsPlaceholder: 'Contatos',
+        listContacts: this.listPossiblesClients,
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        const obj: Contact = {
+          contactId: result.client.id,
+          clientId: this.currentId,
+        }
+        this.clientService.addContact(obj).subscribe(
+          () => {
+            this.getData();
+            this.openSnackBar(`Contato \' ${result.name} \' adicionado a lista`, 'Fechar');
+          },
+          (error) => {
+            if(error.status === 400){
+              this.openSnackBar(error.error, 'Fechar');
+            }
+          }
+        );
+      }
+    });
+  }
+
+  openModalMessageForClient(client: Client){
+    const dialogRef = this.dialog.open(ModalComponent, {
+      width: '300px',
+      data: {
+        title: 'MENSAGEM PARA \'' + client.name +'\'',
+        namePlaceholder: 'Mensagem',
       },
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         const obj: Object = {
-          clientId: idClient,
+          ClientReceviedId: client.id,
+          ClientSendId: this.currentId,
           message: result.name
         }
         this.messageService.sendMessage(obj).subscribe(
           () => {
-            this.getDetails(this.currentId);
-            this.openSnackBar(`Mensagem enviada para \' ${nameClient} \'`, 'Fechar', true);
+            this.openSnackBar(`Mensagem enviada para \' ${client.name} \'`, 'Fechar');
           },
           (error) => {
             if(error.status === 400){
@@ -104,20 +144,19 @@ export class ClientDetailsComponent implements OnInit {
   }
 
 
-  openSnackBar(message: string, action: string, sucess: boolean = false) {
+  openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
         duration: 6000,
         verticalPosition: 'bottom',
-        horizontalPosition: 'end',
-        panelClass: sucess ? ['success-snackbar'] : ['warning-snackbar']
+        horizontalPosition: 'end'
     });
   }
 
   changeStatusClient(){
     this.clientService.changeStatus(this.currentId).subscribe(()=>{
       this.currentClient.isOnline = !this.currentClient.isOnline;
-      this.openSnackBar(`Cliente \' ${this.currentClient.name} \' mudou de STATUS`, 'Fechar', true);
-      setTimeout(()=>{this.getDetails(this.currentId, true)}, 3000);
+      this.openSnackBar(`Cliente \' ${this.currentClient.name} \' mudou de STATUS`, 'Fechar');
+      setTimeout(()=>{this.getDetails()}, 3000);
     });
   }
 
