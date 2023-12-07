@@ -5,6 +5,11 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>57c32d29-e00e-4e13-a6ca-f2b81f9289c6</ProjectGuid>
   </PropertyGroup>
+  <PropertyGroup>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerServiceName>gerenciadorbrokerapi</DockerServiceName>
+    <DockerServiceUrl>https://localhost:5000/swagger/index.html</DockerServiceUrl>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
