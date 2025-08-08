@@ -26,6 +26,27 @@ namespace GerenciadorBrokerAPI.Controllers
         {
             return Ok(await _clientService.GetAllClient());
         }
+        
+
+        [HttpGet("OthersContacts/{id}")]
+        public async Task<IActionResult> GetPossiblesContacts(Guid id)
+        {
+            return Ok(await _clientService.GetPossiblesContactsOfClient(id));
+        }
+        
+        [HttpPost("AddContact")]
+        public async Task<IActionResult> AddContact(ContactViewModel bindContactViewModel)
+        {
+            await _clientService.AddContact(bindContactViewModel);
+            return Ok();
+        }
+
+        [HttpDelete("RemoveContact")]
+        public async Task<IActionResult> RemoveContact(ContactViewModel bindContactViewModel)
+        {
+            await _clientService.RemoveContact(bindContactViewModel);
+            return Ok();
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateClient([FromQuery] CreateClientViewModel clientViewModel)
@@ -48,25 +69,11 @@ namespace GerenciadorBrokerAPI.Controllers
             {
                 await _clientService.DeleteClient(id);
             }
-            catch (NotFoundException ex)
+            catch (Exception ex)
             {
                 return NotFound(ex.Message);
             }
             return NoContent();
-        }
-
-        [HttpPost("Subscribe")]
-        public async Task<IActionResult> SubscribeClientInTopic(SubscribeTopicViewModel subscribeTopicViewModel)
-        {
-            try
-            {
-                await _clientService.SubscribeTopic(subscribeTopicViewModel);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            return Ok();
         }
 
         [HttpPut("{id}")]

@@ -5,5 +5,6 @@
         public string Body { get; set; }
         public DateTime SendMessageDate { get; set; }
         public DateTime CreateDate { get; set; }
+        public ReadAllClientViewModel ClientSend { get; set; }
     }
 }

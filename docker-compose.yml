@@ -1,5 +1,9 @@
 version: '3.4'
 
+volumes:
+  dataDb:
+  dataRabbit:
+
 services:
   gerenciadorbrokerapi:
     image: ${DOCKER_REGISTRY-}gerenciadorbrokerapi
@@ -11,15 +15,21 @@ services:
   db:
     image: mysql
     restart: always
+    container_name: db
     ports:
       - "4000:3306"
+    volumes:
+      - dataDb:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: rabbitmqGerenciador
+    container_name: rabbitmq
+    hostname: rabbitmq
     restart: always
+    volumes:
+      - dataRabbit:/var/lib/rabbitmq/mnesia/
     ports:
     - "5672:5672"
     - "15672:15672"

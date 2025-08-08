@@ -2,8 +2,6 @@ using CrossCouting;
 using Infra;
 using Infra.Repository;
 using Infra.Repository.Interfaces;
-using Microsoft.Extensions.Hosting;
-using Models;
 using Services;
 using Services.Interfaces;
 
@@ -18,15 +16,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
-builder.Services.AddScoped<IClientTopicRepository, ClientTopicRepository>();
-builder.Services.AddScoped<IQueueTopicRepository, QueueTopicRepository>();
 
-builder.Services.AddScoped<IMessageReceviedRepository, MessageReceviedRepository>();
-builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
 
 builder.Services.AddScoped<IQueueService, QueueService>();
-builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 
@@ -47,7 +42,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularApp",
         b =>
         {
-            b.WithOrigins("http://"+ builder.Configuration["ServerFront"] +":4200")
+            b.WithOrigins("http://" + builder.Configuration["ServerFront"] + ":4200")
                     .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader();

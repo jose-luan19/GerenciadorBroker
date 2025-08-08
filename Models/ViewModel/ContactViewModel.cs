@@ -1,8 +1,8 @@
 ﻿namespace Models.ViewModel
 {
-    public class SubscribeTopicViewModel
+    public class ContactViewModel
     {
-        public Guid TopicId { get; set; }
         public Guid ClientId { get; set; }
+        public Guid ContactId { get; set; }
     }
 }

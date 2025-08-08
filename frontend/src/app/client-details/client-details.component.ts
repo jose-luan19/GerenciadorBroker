@@ -6,10 +6,9 @@ import { ClientService } from '../services/client.service';
 import { ClientDetails } from '../interfaces/clientDetails';
 import { format } from 'date-fns';
 import { Client } from '../interfaces/client';
-import { TopicService } from '../services/topic.service';
-import { Topic } from '../interfaces/topic';
 import { ModalComponent } from '../component/modal/modal.component';
 import { MessageService } from '../services/message.service';
+import { Contact } from '../interfaces/contact';
 
 @Component({
   selector: 'app-client-details',
@@ -21,63 +20,51 @@ export class ClientDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private clientService: ClientService,
-    private topicService: TopicService,
     private messageService: MessageService,
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    )
-    {}
+  )
+  {}
 
   private currentId!: string;
   public currentClient!: ClientDetails;
-  public listClients!: Client[];
-  public listTopics!: Topic[];
+  public listPossiblesClients!: Client[];
 
-  getDetails(id: string){
-    this.clientService.getDetailsClient(id).subscribe((client: ClientDetails)=>{
-      this.currentClient = client
-      this.currentClient.messages = this.currentClient.messages.sort((a, b) => {
-        const dateA = new Date(a.createDate);
-        const dateB = new Date(b.createDate);
-        return dateA.getTime() - dateB.getTime();
-      });
-      this.formatarData();
-      this.getOtherClients();
-      this.getTopics();
-      this.cdr.detectChanges();
-    });
-  }
-  getOtherClients(){
-    this.clientService.getAll().subscribe((clients: Client[])=>{
-      this.listClients = clients.filter(item => item.id !== this.currentClient.id).sort((a, b) => {
-        const dateA = new Date(a.createDate);
-        const dateB = new Date(b.createDate);
-        return dateA.getTime() - dateB.getTime();
-      });
-    });
+  getData(){
+    this.getDetails();
+    this.getOtherClients();
   }
 
-  getTopics(){
-    this.topicService.getAll().subscribe((topics: Topic[])=>{
-      this.listTopics = topics.sort((a, b) => {
-        const dateA = new Date(a.createDate);
-        const dateB = new Date(b.createDate);
-        return dateA.getTime() - dateB.getTime();
-      });;
-    });
-  }
-
-  topicsSubscribe(id: string): boolean{
-    var exist = this.currentClient.topics.some(item => item.id === id);
-    return exist;
-  }
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.currentId = params['id'];
-      this.getDetails(this.currentId);
+      this.getData();
     });
   }
+
+  getDetails(){
+    this.clientService.getDetailsClient(this.currentId).subscribe((client: ClientDetails)=>{
+      this.currentClient = client;
+      this.getMessages();
+      this.cdr.detectChanges();
+  });
+}
+  getMessages(){
+    this.currentClient.messages = this.currentClient.messages.sort((a, b) => {
+      const dateA = new Date(a.createDate);
+      const dateB = new Date(b.createDate);
+      return dateA.getTime() - dateB.getTime();
+    });
+    this.formatarData();
+  }
+
+  getOtherClients(){
+    this.clientService.getAllContactsPossible(this.currentId).subscribe((clients: Client[])=>{
+      this.listPossiblesClients = clients;
+    });
+  }
+
   formatarData() {
     this.currentClient.messages.forEach(element => {
       const dataObj = new Date(element.sendMessageDate);
@@ -85,88 +72,91 @@ export class ClientDetailsComponent implements OnInit {
     });
   }
 
-  openModalMessageForClient(idClient: string, nameClient: string){
-    const dialogRef = this.dialog.open(ModalComponent, {
-      width: '300px',
-      data: {
-        title: 'MENSAGEM PARA \'' + nameClient +'\'',
-        parameterPlaceholder: 'Mensagem',
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        const obj: Object = {
-          clientId: idClient,
-          message: result.name
-        }
-        this.messageService.sendMessage(obj).subscribe(
-          () => {
-            this.getDetails(this.currentId);
-            this.openSnackBar(`Mensagem enviada para \' ${nameClient} \'`, 'Fechar', true);
-          },
-          (error) => {
-            if(error.status === 400){
-              this.openSnackBar(error.error, 'Fechar');
-            }
-          }
-        );
-      }
-    });
-  }
-
-  openModalMessageForTopic(idTopic: string, nameTopic: string){
-    const dialogRef = this.dialog.open(ModalComponent, {
-      width: '300px',
-      data: {
-        title: 'MENSAGEM PARA TÓPICO \'' + nameTopic + '\'',
-        parameterPlaceholder: 'Mensagem',
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        const obj: Object = {
-          topicId: idTopic,
-          message: result.name
-        }
-        this.messageService.sendMessage(obj).subscribe(
-          () => {
-            this.getDetails(this.currentId);
-            this.openSnackBar(`Mensagem enviada para tópico \' ${nameTopic} \'`, 'Fechar', true);
-          },
-          (error) => {
-            if(error.status === 400){
-              this.openSnackBar(error.error, 'Fechar');
-            }
-          }
-        );
-      }
-    });
-  }
-  subscribeInTopic(idTopic: string, nameTopic: string){
-    const subscribe: Object ={
-      topicId: idTopic,
-      clientId: this.currentId
+  removeContact(contact: Client){
+    const contactRemove: Contact = {
+      clientId: this.currentId,
+      contactId: contact.id
     }
-    this.clientService.subscribe(subscribe).subscribe(() => {
-      this.getDetails(this.currentId);
-      this.openSnackBar(`Tópico \' ${nameTopic} \' assinadoo`, 'Fechar', true);
+    this.clientService.removeContact(contactRemove).subscribe(()=>{
+      this.getData();
+      this.openSnackBar(`Contato \' ${contact.name} \' removido da lista`, 'Fechar');
     });
   }
-  openSnackBar(message: string, action: string, sucess: boolean = false) {
+
+  openModalAddContact(){
+    const dialogRef = this.dialog.open(ModalComponent, {
+      width: '300px',
+      data: {
+        title: 'Selecionar Contato',
+        listContactsPlaceholder: 'Contatos',
+        listContacts: this.listPossiblesClients,
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        const obj: Contact = {
+          contactId: result.client.id,
+          clientId: this.currentId,
+        }
+        this.clientService.addContact(obj).subscribe(
+          () => {
+            this.getData();
+            this.openSnackBar(`Contato \' ${result.name} \' adicionado a lista`, 'Fechar');
+          },
+          (error) => {
+            if(error.status === 400){
+              this.openSnackBar(error.error, 'Fechar');
+            }
+          }
+        );
+      }
+    });
+  }
+
+  openModalMessageForClient(client: Client){
+    const dialogRef = this.dialog.open(ModalComponent, {
+      width: '300px',
+      data: {
+        title: 'MENSAGEM PARA \'' + client.name +'\'',
+        namePlaceholder: 'Mensagem',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        const obj: Object = {
+          ClientReceviedId: client.id,
+          ClientSendId: this.currentId,
+          message: result.name
+        }
+        this.messageService.sendMessage(obj).subscribe(
+          () => {
+            this.openSnackBar(`Mensagem enviada para \' ${client.name} \'`, 'Fechar');
+          },
+          (error) => {
+            if(error.status === 400){
+              this.openSnackBar(error.error, 'Fechar');
+            }
+          }
+        );
+      }
+    });
+  }
+
+
+  openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
         duration: 6000,
         verticalPosition: 'bottom',
-        horizontalPosition: 'end',
-        panelClass: sucess ? ['success-snackbar'] : ['warning-snackbar']
+        horizontalPosition: 'end'
     });
   }
 
   changeStatusClient(){
     this.clientService.changeStatus(this.currentId).subscribe(()=>{
-      this.getDetails(this.currentId);
-      this.openSnackBar(`Cliente \' ${this.currentClient.name} \' mudou de STATUS`, 'Fechar', true);
+      this.currentClient.isOnline = !this.currentClient.isOnline;
+      this.openSnackBar(`Cliente \' ${this.currentClient.name} \' mudou de STATUS`, 'Fechar');
+      setTimeout(()=>{this.getDetails()}, 3000);
     });
   }
 

@@ -40,7 +40,7 @@ export class ListClientsComponent implements OnInit{
   clickDeleteClient(id: string){
     this.clientService.deleteClient(id).subscribe(
       () => {
-        this.openSnackBar('Cliente excluído', 'Fechar', true);
+        this.openSnackBar('Cliente excluído', 'Fechar');
         this.getData();
       },
       (error) => {
@@ -55,7 +55,7 @@ export class ListClientsComponent implements OnInit{
       width: '300px',
       data: {
         title: title,
-        parameterPlaceholder: parameterString,
+        namePlaceholder: parameterString,
       },
     });
 
@@ -63,7 +63,7 @@ export class ListClientsComponent implements OnInit{
       if(result){
         this.clientService.createClient(result.name).subscribe(
           (response: Response) => {
-            this.openSnackBar(`Cliente \' ${response.name} \' criado`, 'Fechar', true);
+            this.openSnackBar(`Cliente \' ${response.name} \' criado`, 'Fechar');
             this.getData();
           },
           (error) => {
@@ -75,12 +75,11 @@ export class ListClientsComponent implements OnInit{
       }
     });
   }
-  openSnackBar(message: string, action: string, sucess: boolean = false) {
+  openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-        duration: 6000, // Tempo em milissegundos que o alerta será exibido
-        verticalPosition: 'bottom', // Posição vertical do alerta
-        horizontalPosition: 'end', // Posição horizontal do alerta
-        panelClass: sucess ? ['success-snackbar'] : ['warning-snackbar']
+        duration: 6000,
+        verticalPosition: 'bottom',
+        horizontalPosition: 'end'
     });
   }
   navigateToDetails(clientId: string) {

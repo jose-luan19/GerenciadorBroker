@@ -1,4 +1,5 @@
 ﻿using Infra.Repository.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Models;
@@ -6,6 +7,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Services.Interfaces;
 using System.Text;
+using System.Text.Json;
 
 namespace CrossCouting
 {
@@ -15,8 +17,13 @@ namespace CrossCouting
         private IMessageService _messageService;
         private readonly IServiceProvider _serviceProvider;
         private List<Client> clientsOn;
+        private List<Client> clientsCurrent;
         private List<string> consumersTag = new List<string>();
         private ConfigRabbitMQ configRabbitMQ;
+        private IConfiguration _configuration;
+        private string _host;
+
+
 
         public MessageConsumerService(IServiceProvider serviceProvider)
         {
@@ -29,11 +36,13 @@ namespace CrossCouting
                 _clientRepository = scope.ServiceProvider.GetRequiredService<IClientRepository>();
                 _messageService = scope.ServiceProvider.GetRequiredService<IMessageService>();
                 configRabbitMQ = scope.ServiceProvider.GetRequiredService<ConfigRabbitMQ>();
+                _configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                _host = _configuration["ServerRabbitMQ"];
                 clientsOn = await _clientRepository.GetAllOnline();
                 var count = 1;
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var clientsCurrent = await _clientRepository.GetAllOnline();
+                    clientsCurrent = await _clientRepository.GetAllOnline();
                     var consumer = new EventingBasicConsumer(configRabbitMQ.Channel);
                     consumer.Received += (model, ea) =>
                     {
@@ -43,16 +52,18 @@ namespace CrossCouting
                     };
                     if ((!clientsOn.SequenceEqual(clientsCurrent) || count == 1) && clientsCurrent.Count > 0)
                     {
-                        if (consumersTag.Count > 0)
+                        if (count > 1)
                         {
-                            consumersTag.ForEach(client => { configRabbitMQ.Channel.BasicCancel(client); });
-                            consumersTag.Clear();
+                            var httpClient = new HttpClient();
+                            httpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes("guest:guest"))}");
+                            var response = await httpClient.GetStringAsync($"http://{_host}:15672/api/consumers");
+                            var consumers = JsonSerializer.Deserialize<List<Consumer>>(response);
+                            consumers.ForEach(consumer => { configRabbitMQ.Channel.BasicCancel(consumer.ConsumerTag); });
                         }
                         clientsCurrent
                             .ForEach(client =>
                                 {
-                                    var consumerTag = configRabbitMQ.Channel.BasicConsume(queue: client.Queue.Name, autoAck: true, consumer: consumer);
-                                    consumersTag.Add(consumerTag);
+                                    configRabbitMQ.Channel.BasicConsume(queue: client.Queue.Name, autoAck: true, consumer: consumer);
                                 }
                             );
                         count++;

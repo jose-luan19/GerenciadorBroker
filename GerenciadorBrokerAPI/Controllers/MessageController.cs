@@ -20,11 +20,5 @@ namespace GerenciadorBrokerAPI.Controllers
             await _messageService.PostMessage(createMessageViewModel);
             return Ok();
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetCountMessage()
-        {
-            return Ok(await _messageService.GetCountMessagesInQueues());
-        }
     }
 }

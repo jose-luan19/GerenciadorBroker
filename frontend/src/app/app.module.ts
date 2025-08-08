@@ -5,8 +5,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { ListQueuesComponent } from './list-queues/list-queues.component';
-import { QueueService } from './services/queue.service';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ModalComponent } from './component/modal/modal.component';
@@ -15,21 +13,18 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { ListTopicsComponent } from './list-topics/list-topics.component';
-import { TopicService } from './services/topic.service';
 import { ListClientsComponent } from './list-clients/list-clients.component';
 import { ClientService } from './services/client.service';
 import { ClientDetailsComponent } from './client-details/client-details.component';
 import { MessageService } from './services/message.service';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     NavBarComponent,
-    ListQueuesComponent,
     ModalComponent,
-    ListTopicsComponent,
     ListClientsComponent,
     ClientDetailsComponent
   ],
@@ -40,13 +35,12 @@ import { MessageService } from './services/message.service';
     HttpClientModule,
     MatDialogModule,
     MatFormFieldModule,
+    MatSelectModule,
     MatInputModule,
     BrowserAnimationsModule,
     MatSnackBarModule
   ],
   providers: [
-    QueueService,
-    TopicService,
     ClientService,
     MessageService
   ],

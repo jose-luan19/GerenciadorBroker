@@ -10,29 +10,23 @@ namespace Services
     public class ClientService : IClientService
     {
         private readonly IClientRepository _clientRepository;
-        private readonly ITopicRepository _topicRepository;
-        private readonly IClientTopicRepository _clientTopicRepository;
         private readonly IQueueRepository _queueRepository;
+        private readonly IContactRepository _contactRepository;
         private readonly IQueueService _queueService;
-        private readonly ITopicService _topicService;
         private readonly IMapper _mapper;
         public ClientService
             (
             IClientRepository clientRepository,
-            ITopicRepository topicRepository,
-            IClientTopicRepository clientTopicRepository,
             IQueueRepository queueRepository,
+            IContactRepository contactRepository,
             IQueueService queueService,
-            ITopicService topicService,
             IMapper mapper
             )
         {
             _clientRepository = clientRepository;
-            _topicRepository = topicRepository;
-            _clientTopicRepository = clientTopicRepository;
             _queueRepository = queueRepository;
+            _contactRepository = contactRepository;
             _queueService = queueService;
-            _topicService = topicService;
             _mapper = mapper;
         }
 
@@ -46,7 +40,7 @@ namespace Services
             var queueName = clientViewModel.Name + ".QUEUE";
             var verifyQueueExists = _queueRepository.Find(x => x.Name == queueName);
 
-            if(verifyQueueExists == null)
+            if (verifyQueueExists == null)
             {
                 verifyQueueExists = await _queueService.
                 CreateQueue(new CreateQueueViewModel() { Name = queueName });
@@ -55,7 +49,7 @@ namespace Services
             Client newClient = new()
             {
                 Name = clientViewModel.Name,
-                QueueId =  verifyQueueExists.Id,
+                QueueId = verifyQueueExists.Id,
             };
             _clientRepository.Insert(newClient);
             _clientRepository.Commit();
@@ -69,8 +63,7 @@ namespace Services
             {
                 throw new NotFoundException("O Client não foi encontrado.");
             }
-            _clientRepository.Delete(client);
-            _clientRepository.Commit();
+            await _queueService.DeleteQueue(client.Queue);
         }
 
         public async Task<List<ReadAllClientViewModel>> GetAllClient()
@@ -85,31 +78,7 @@ namespace Services
             return _mapper.Map<ReadDetailsClientViewModel>(clientDetails);
         }
 
-        public async Task SubscribeTopic(SubscribeTopicViewModel subscribeTopicViewModel)
-        {
-            var client = _clientRepository.GetById(subscribeTopicViewModel.ClientId);
-            var topic = _topicRepository.GetById(subscribeTopicViewModel.TopicId);
 
-            if (client == null || topic == null)
-            {
-                throw new NotFoundException("Cliente ou Topico não existe");
-            }
-            List<CreateQueueViewModel> createQueueViewModels = new List<CreateQueueViewModel>()
-            {
-                new()
-                {
-                    Name = client.Queue.Name
-                }
-            };
-            await _topicService.TopicBindQueues(createQueueViewModels, topic);
-            ClientTopic newClientTopic = new()
-            {
-                ClientId = subscribeTopicViewModel.ClientId,
-                TopicId = subscribeTopicViewModel.TopicId
-            };
-            _clientTopicRepository.Insert(newClientTopic);
-            _clientTopicRepository.Commit();
-        }
         public async Task ChangeStatus(Guid id)
         {
             var client = _clientRepository.GetById(id);
@@ -118,5 +87,27 @@ namespace Services
             _clientRepository.Commit();
         }
 
+        public async Task<List<ReadAllClientViewModel>> GetPossiblesContactsOfClient(Guid id)
+        {
+            var possiblesContacts = await _clientRepository.GetPossiblesContacts(id);
+            return _mapper.Map<List<ReadAllClientViewModel>>(possiblesContacts);
+        } 
+
+        public async Task AddContact(ContactViewModel bindViewModel)
+        {
+            Contact contact = new()
+            {
+                ClientId = bindViewModel.ClientId,
+                ClientContactId = bindViewModel.ContactId
+            };
+            _contactRepository.Insert(contact);
+            _contactRepository.Commit();
+        }
+        public async Task RemoveContact(ContactViewModel bindViewModel)
+        {
+            var contact = _contactRepository.Find(x => (x.ClientId == bindViewModel.ClientId && x.ClientContactId == bindViewModel.ContactId));
+            _contactRepository.Delete(contact);
+            _contactRepository.Commit();
+        }
     }
 }
