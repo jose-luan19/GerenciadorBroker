@@ -6,7 +6,6 @@ volumes:
 
 services:
   gerenciadorbrokerapi:
-    image: ${DOCKER_REGISTRY-}gerenciadorbrokerapi
     restart: always
     build:
       context: .
@@ -15,7 +14,6 @@ services:
   db:
     image: mysql
     restart: always
-    container_name: db
     ports:
       - "4000:3306"
     volumes:
@@ -25,7 +23,6 @@ services:
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
     hostname: rabbitmq
     restart: always
     volumes:
@@ -36,10 +33,6 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: frontend
     restart: always
     ports:
       - 4200:4200
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
