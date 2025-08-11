@@ -1,35 +1,47 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
+using System.Runtime;
 
 namespace CrossCouting
 {
     public class ConfigRabbitMQ
     {
-        private readonly IConfiguration _configuration;
-        private readonly string _host;
-        public ConfigRabbitMQ(IConfiguration configuration)
-        {
-            _configuration = configuration;
-            _host = _configuration["ServerRabbitMQ"];
-            configure();
-        }
+        private readonly RabbitMqSettings _settings;
+        private readonly ConnectionFactory _factory;
 
-        private ConnectionFactory factory;
-        private IConnection connection;
-        public IModel Channel { get; private set; }
-
-        private void configure()
+        public ConfigRabbitMQ(IOptions<RabbitMqSettings> options)
         {
-            factory = new ConnectionFactory
+            _settings = options.Value;
+            _factory = new ConnectionFactory
             {
-                HostName = _host,
-                Port = 5672,
-                UserName = "guest",
-                Password = "guest"
+                HostName = _settings.Host,
+                Port = _settings.Port,
+                UserName = _settings.UserName,
+                Password = _settings.Password,
+                AutomaticRecoveryEnabled = true, // reconecta sozinho
+                NetworkRecoveryInterval = TimeSpan.FromSeconds(10) // tenta reconectar a cada 10s
             };
-            connection = factory.CreateConnection();
-            Channel = connection.CreateModel();
         }
 
+        public IConnection CreateConnection()
+        {
+            return _factory.CreateConnection();
+        }
+
+        public IModel CreateChannel()
+        {
+            return CreateConnection().CreateModel();
+        }
     }
+
+
+    public class RabbitMqSettings
+    {
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+    }
+
 }

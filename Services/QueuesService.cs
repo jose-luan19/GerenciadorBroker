@@ -24,11 +24,11 @@ namespace Services
             {
                 throw new AlreadyExistExpection("Fila já existe");
             }
-            _configRabbitMQ.Channel.QueueDeclare(queue: queue.Name, durable: true, exclusive: false, autoDelete: false);
-            Queues newQueue = new Queues
-            {
-                Name = queue.Name
-            };
+            using var connection = _configRabbitMQ.CreateConnection();
+            using var channel = connection.CreateModel();
+
+            channel.QueueDeclare(queue: queue.Name, durable: true, exclusive: false, autoDelete: false);
+            Queues newQueue = new() {Name = queue.Name};
             _repository.Insert(newQueue);
             _repository.Commit();
             return newQueue;
@@ -36,7 +36,10 @@ namespace Services
 
         public async Task DeleteQueue(Queues queue)
         {
-            _configRabbitMQ.Channel.QueueDelete(queue: queue.Name);
+            using var connection = _configRabbitMQ.CreateConnection();
+            using var channel = connection.CreateModel();
+
+            channel.QueueDelete(queue: queue.Name);
             _repository.Delete(queue);
             _repository.Commit();
         }
